@@ -4,7 +4,7 @@ using namespace std;
 
 template<class T> size_t partition(T* data, size_t r) {
 	size_t l = 0;
-	size_t support_element = (data[l] + data[r]) / 2;
+	T support_element = data[l];
 
 	while (true) {
 		while (data[l] < support_element && l < r)
@@ -60,7 +60,6 @@ bool test(int size, bool print = true) {
 }
 
 int main() {
-
 	if (test(20))
 		cout << "correct" << endl;
 	else
