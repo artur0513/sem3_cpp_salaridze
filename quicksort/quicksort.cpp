@@ -35,7 +35,7 @@ bool test(int size, bool print = true) {
 
 	srand(time(0));
 	for (int i = 0; i < size; i++) {
-		k[i] = rand() % 10000;
+		k[i] = rand();
 		if (print)
 			cout << k[i] << " ";
 	}

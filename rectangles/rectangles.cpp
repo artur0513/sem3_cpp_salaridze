@@ -6,7 +6,7 @@ using namespace std;
 struct Point {
 	unsigned long long const x, y;
 
-	Point (unsigned long long _x, unsigned long long _y) : x(_x), y(_y) { }
+	Point(unsigned long long _x, unsigned long long _y) : x(_x), y(_y) { }
 
 	Point minx(Point const& rha) const {
 		return Point(rha.x < x ? rha.x : x, y);
@@ -22,15 +22,19 @@ struct Point {
 	}
 
 	void print() const {
-	cout << "(" << x << ", " << y << ") ";
+		cout << "(" << x << ", " << y << ") ";
 	}
 };
+ostream& operator<< (ostream& stream, const Point& p) {
+	return stream << "(" << p.x << ", " << p.y << ") ";
+}
+
 
 class Rectangle : public Point {
 public:
 	Rectangle() : Point(0, 0) {}
 
-	Rectangle(Point const & p) : Point(p) {}
+	Rectangle(Point const& p) : Point(p) {}
 
 	Rectangle operator+(Rectangle const& rha) const {
 		return Rectangle(Point(max(x, rha.x), max(y, rha.y)));
@@ -44,6 +48,7 @@ public:
 		return "(" + to_string(x) + "," + to_string(y) + ")";
 	}
 };
+
 
 string delete_spaces(string line) { // Удаляет пробелы из строки
 	string ans;
@@ -100,16 +105,16 @@ Rectangle read_rectangle(string& line, int bracket_pos, bool dir) { // Счит�
 // Эта функция ищет оператор * или + в строке, считывает прямоугольник спрваа и слева от оператора, удаляет это все и вставляет на место результат операции
 string one_calculation(string expression) {
 	int pos = expression.find("*");
-	
-	if (pos != string::npos) {	
-		Rectangle r1 = read_rectangle(expression, pos+1, true);
-		Rectangle r2 = read_rectangle(expression, pos-1, false);
+
+	if (pos != string::npos) {
+		Rectangle r1 = read_rectangle(expression, pos + 1, true);
+		Rectangle r2 = read_rectangle(expression, pos - 1, false);
 		pos = expression.find("*");
 		expression.insert(pos + 1, (r1 * r2).get_line());
 		expression.erase(pos, 1);
 		return expression;
 	}
-	
+
 	pos = expression.find("+");
 	if (pos != string::npos) {
 		Rectangle r1 = read_rectangle(expression, pos + 1, true);
@@ -119,7 +124,7 @@ string one_calculation(string expression) {
 		expression.erase(pos, 1);
 		return expression;
 	}
-	
+
 	return expression;
 }
 
@@ -127,11 +132,16 @@ int main() {
 	string expression, temp_expression;
 	getline(cin, expression);
 
+
+
 	expression = delete_spaces(expression);
 	temp_expression = one_calculation(expression);
 	while (expression != temp_expression) { // применяем к строке функцию one_calculation до тех пор, пока ничего не перестанет менятся
 		expression = temp_expression;
 		temp_expression = one_calculation(expression);
 	}
-	cout << expression << endl;
+	//cout << expression << endl;
+
+	Rectangle ans = read_rectangle(expression, expression.find("("), true);
+	cout << "answer output with cout: " << ans << endl;
 }
