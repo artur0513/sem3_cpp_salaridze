@@ -1,0 +1,13 @@
+s "resources/sprites/sprites/grass.png" 0 0 1080 1080
+-10.0 10.0 10.0 10.0 100.0 0
+s "resources/sprites/sprites/grass.png" 0 0 1080 1080
+0.0 10.0 10.0 10.0 100.0 0
+s "resources/sprites/sprites/grass.png" 0 0 1080 1080
+-10.0 0.0 10.0 10.0 100.0 0
+s "resources/sprites/sprites/grass.png" 0 0 1080 1080
+0.0 0.0 10.0 10.0 100.0 0
+
+s "resources/sprites/sprites/grass.png" 0 0 1080 1080
+10.0 10.0 10.0 10.0 100.0 0
+s "resources/sprites/sprites/grass.png" 0 0 1080 1080
+10.0 0.0 10.0 10.0 100.0 0

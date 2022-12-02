@@ -1,0 +1,34 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform sampler2D sprite; // Спрайт который рисуем
+uniform sampler2D height_result; 
+uniform vec2 height_resolution;
+
+float color_to_height(vec2 color){
+	float ans;
+	ans = color.r*0.85 + floor(color.g*255.0)*0.85;
+	return ans;
+}
+
+void main() {
+	vec4 sprite_color = texture2D(sprite, gl_TexCoord[0].xy);
+	vec4 base_color = texture2D(height_result, gl_FragCoord.xy/height_resolution);
+	
+	/*if (base_color.a < 0.1){
+		gl_FragColor = vec4(1.0);	
+	}*/
+	
+	vec4 output_color;
+	if (color_to_height(sprite_color.rg) > color_to_height(base_color.rg)){
+		output_color.rg = sprite_color.rg;
+	}
+	else {
+		output_color.rg = base_color.rg;
+	}
+	output_color.b = max(sprite_color.b, base_color.b);
+	output_color.a = max(sprite_color.a, base_color.a);
+	
+    gl_FragColor = output_color;
+}

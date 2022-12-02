@@ -1,0 +1,8 @@
+s "resources/sprites/sprites/road.png" 0 0 777 449
+-15.4 1.5 7.7 3.0 90.0 0
+s "resources/sprites/sprites/road.png" 0 0 777 449
+-7.7 1.5 7.7 3.0 90.0 0
+s "resources/sprites/sprites/road.png" 0 0 777 449
+-0.0 1.5 7.7 3.0 90.0 0
+s "resources/sprites/sprites/road.png" 0 0 777 449
+7.7 1.5 7.7 3.0 90.0 0

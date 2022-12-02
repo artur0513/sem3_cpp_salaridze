@@ -1,0 +1,41 @@
+s "resources/sprites/sprites/stump0.png" 0 0 54 51
+-0.3 3.0 0.4 0.4 0 0
+
+s "resources/sprites/sprites/stump0.png" 0 0 54 51
+0.9 3.7 0.4 0.4 0 0
+
+s "resources/sprites/sprites/stump0.png" 0 0 54 51
+2.3 2.6 0.4 0.4 0 0
+
+s "resources/sprites/sprites/stump0.png" 0 0 54 51
+1.5 4.0 0.4 0.4 0 0
+
+s "resources/sprites/sprites/stump0.png" 0 0 54 51
+0.5 4.5 0.4 0.4 0 0
+
+s "resources/sprites/bush1.png" 0 0 601 489
+0.94 3.1 1.3 1.3 0 0
+
+s "resources/sprites/bush2.png" 0 0 521 444
+1.8 4.5 1.3 1.3 0 0
+
+s "resources/sprites/bush13.png" 0 0 575 495
+-0.2 2.9 1.3 1.3 0 0
+
+s "resources/sprites/bush6.png" 0 0 656 564
+2.8 4.9 1.3 1.3 0 0
+
+s "resources/sprites/bush13.png" 0 0 575 495
+3.2 2.8 1.3 1.3 0 0
+
+s "resources/sprites/sprites/stump1.png" 0 0 138 85
+1.5 2.25 1.5 0.75 10.0 0
+
+s "resources/sprites/sprites/bush0.png" 0 0 153 141
+1.8 4.8 0.9 0.9 10 0
+
+s "resources/sprites/sprites/bush0.png" 0 0 153 141
+0.5 2.9 0.9 0.9 10 0
+
+s "resources/sprites/sprites/bush0.png" 0 0 153 141
+1.2 2.2 0.9 0.9 10 0

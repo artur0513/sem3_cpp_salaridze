@@ -1,0 +1,59 @@
+s "resources/sprites/sosna0.png" 0 0 2560 2560
+-0.4 8.1 6 6 0.2 0
+h "resources/sprites/sosna0_output.png" 0 0 2560 2560
+-0.4 8.1 6 6 0.2 0
+
+
+s "resources/sprites/elka2.png" 0 0 640 750
+2.5 4.7 2 2.34 0 0
+h "resources/sprites/elka2_output.png" 0 0 640 750
+2.5 4.7 2 2.34 0 0
+
+
+s "resources/sprites/sosna0.png" 0 0 2560 2560
+1.6 9.3 6 6 0.1 0
+h "resources/sprites/sosna0_output.png" 0 0 2560 2560
+1.6 9.3 6 6 0.1 0
+
+
+s "resources/sprites/campfire0.png" 0 0 398 283
+1.3 3.5 1.0 0.7 0 0
+
+e "resources/sprites/distortion.png" 0 0 256 256
+1.37 4.2 0.9 0.9 -1.0 0
+"resources/effects/campfire.txt"
+2
+rise_factor 0.33
+distortion_factor 0.35
+
+l 1 1.8 3.3 6.0 3.5
+0.0 9.0
+3
+0.7 0.65 0.5 400
+0.6 0.61 0.57 400
+0.65 0.63 0.54 400
+
+s "resources/sprites/sprites/bush0.png" 0 0 153 141
+1.8 4.8 0.9 0.9 0 0
+
+s "resources/sprites/sprites/bush0.png" 0 0 153 141
+0.5 2.9 0.9 0.9 0 0
+
+s "resources/sprites/sprites/bush0.png" 0 0 153 141
+1.2 2.2 0.9 0.9 0 0
+
+
+s "resources/sprites/sprites/bush0.png" 0 0 153 141
+2.1 4.0 0.9 0.9 0 0
+
+s "resources/sprites/sprites/bush0.png" 0 0 153 141
+2.5 2.7 0.9 0.9 0 0
+
+
+s "resources/sprites/sosna0.png" 0 0 2560 2560
+-1.4 8.6 6 6 0 0
+h "resources/sprites/sosna0_output.png" 0 0 2560 2560
+-1.4 8.6 6 6 0 0
+
+s "resources/sprites/bush2.png" 0 0 521 444
+-1.3 3.2 1.3 1.3 0 0

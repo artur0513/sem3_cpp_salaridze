@@ -1,0 +1,43 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+const float THRESHOLD = 0.5;
+
+uniform sampler2D raw_texture;
+uniform float world_height;
+uniform float rect_height; 
+
+vec2 height_to_color(float height){
+	vec2 ans = vec2(0.0);
+	ans.g = floor(height/0.85)/255.0;
+	ans.r = (height - floor(ans.g*255.0)*0.85)/0.85;
+	return ans;
+}
+
+void main() {
+	float step = 1.0 / rect_height; // Шаг проверки 
+	
+	vec4 base_color = texture2D(raw_texture, gl_TexCoord[0].xy);
+	vec2 color = vec2(0.0, 0.0);
+
+	if (base_color.g < THRESHOLD){
+		//gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+		return;
+	}
+	
+	float height = 0.0;
+	for (float pos = gl_TexCoord[0].y; pos < 1.0; pos += step){
+		vec4 shape_color = texture2D(raw_texture, vec2(gl_TexCoord[0].x, pos));
+		height += step*world_size.y*(1.0 - shape_color.b);
+		if (shape_color.r > THRESHOLD && shape_color.a > THRESHOLD){
+			color = height_to_color(height);
+			gl_FragColor = vec4(color.r, color.g, 0.0, 1.0);
+			return;
+		}
+	}
+	
+	//color = height_to_color(height);
+	//gl_FragColor = vec4(color.r, color.g, 0.0, 1.0);
+
+}

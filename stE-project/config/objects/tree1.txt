@@ -1,0 +1,37 @@
+s "resources/sprites/sosna0.png" 0 0 2560 2560
+-0.4 8.0 6 6 0 0
+h "resources/sprites/sosna0_output.png" 0 0 2560 2560
+-0.4 8.0 6 6 0 0
+
+s "resources/sprites/sosna0.png" 0 0 2560 2560
+-1.2 6.5 6 6 0 0
+h "resources/sprites/sosna0_output.png" 0 0 2560 2560
+-1.2 6.5 6 6 0 0
+
+
+s "resources/sprites/elka2.png" 0 0 640 750
+2.5 4.7 2 2.34 0 0
+h "resources/sprites/elka2_output.png" 0 0 640 750
+2.5 4.7 2 2.34 0 0
+
+s "resources/sprites/sprites/stump0.png" 0 0 54 51
+1.3 4.6 0.4 0.4 0 0
+
+s "resources/sprites/sprites/stump0.png" 0 0 54 51
+0.9 2.3 0.4 0.4 0 0
+
+s "resources/sprites/bush1.png" 0 0 601 489
+0.94 3.8 1.3 1.3 0 0
+
+s "resources/sprites/bush2.png" 0 0 521 444
+3.8 4.9 1.3 1.3 0 0
+
+
+s "resources/sprites/sprites/bush0.png" 0 0 153 141
+2.8 3.8 0.9 0.9 0 0
+
+s "resources/sprites/sprites/bush0.png" 0 0 153 141
+0.2 2.9 0.9 0.9 0 0
+
+s "resources/sprites/sprites/stump1.png" 0 0 138 85
+1.5 2.4 1.5 0.75 10.0 0

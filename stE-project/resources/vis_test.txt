@@ -1,0 +1,5 @@
+0.0 0.0 16.0 9.0
+s "resources/sprites/sosna0.png" 0 0 1096 2197
+9.4 9.0 2 4 0 0
+h "resources/sprites/sosna0_output.png" 0 0 1096 2197
+9.4 9.0 2 4 0 0

@@ -1,0 +1,28 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform sampler2D light_result; // Карта освещения
+uniform sampler2D diffuse_result; // Обычная цветная текстура, на которую накладываем освещение
+
+void main() {
+	vec2 pos = vec2(gl_TexCoord[0].x, 1.0 - gl_TexCoord[0].y);
+	vec4 light_color;
+	float d = 0.001;
+	
+	light_color += texture2D(light_result, vec2(pos.x, pos.y)) * 0.254; // Небольшое размытие
+	
+	light_color += texture2D(light_result, vec2(pos.x + d, pos.y)) * 0.125;
+	light_color += texture2D(light_result, vec2(pos.x - d, pos.y)) * 0.125;
+	light_color += texture2D(light_result, vec2(pos.x, pos.y + d)) * 0.125;
+	light_color += texture2D(light_result, vec2(pos.x, pos.y - d)) * 0.125;
+	
+	light_color += texture2D(light_result, vec2(pos.x + d, pos.y + d)) * 0.0615;
+	light_color += texture2D(light_result, vec2(pos.x - d, pos.y - d)) * 0.0615;
+	light_color += texture2D(light_result, vec2(pos.x-d, pos.y + d)) * 0.0615;
+	light_color += texture2D(light_result, vec2(pos.x+d, pos.y - d)) * 0.0615;
+	light_color *= 1.2;
+	
+	vec4 base_color = texture2D(diffuse_result, vec2(pos.x, 1.0-pos.y));
+    gl_FragColor = vec4(light_color.r * base_color.r, light_color.g * base_color.g, light_color.b * base_color.b, base_color.a);
+}

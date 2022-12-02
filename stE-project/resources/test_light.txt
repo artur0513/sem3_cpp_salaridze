@@ -1,0 +1,55 @@
+0.0 0.0 16.0 9.0
+s "resources/sprites/backgrnd_test.png" 0 0 2550 1168
+-12.75 5.584 25.50 11.68 100.0 0
+s "resources/sprites/sosna0.png" 0 0 2560 2560
+-4.4 1.0 6 6 0 0
+s "resources/sprites/car.png" 0 0 1097 559
+6.4 0.0 3.0 1.7 0 0
+h "resources/sprites/sosna0_output.png" 0 0 2560 2560
+-4.4 1.0 6 6 0 0
+s "resources/sprites/sosna0.png" 0 0 2560 2560
+-3.4 2.0 6 6 0 0
+h "resources/sprites/sosna0_output.png" 0 0 2560 2560
+-3.4 2.0 6 6 0 0
+s "resources/sprites/vagon.png" 0 0 436 360
+0.6 1.6 4.36 3.60 0 0
+h "resources/sprites/vagon_output.png" 0 0 436 360
+0.6 1.6 4.36 3.60 0 0
+s "resources/sprites/sosna0.png" 0 0 2560 2560
+-2.0 6.0 6 6 0 0
+h "resources/sprites/sosna0_output.png" 0 0 2560 2560
+-2.0 6.0 6 6 0 0
+s "resources/sprites/campfire0.png" 0 0 398 283
+4.3 -1.3 1.0 0.7 0 0
+s "resources/sprites/sosna0.png" 0 0 2560 2560
+-0.4 1 6 6 0 0
+h "resources/sprites/sosna0_output.png" 0 0 2560 2560
+-0.4 1 6 6 0 0
+s "resources/sprites/elka2.png" 0 0 640 750
+1.0 3.7 2 2.34 0 0
+h "resources/sprites/elka2_output.png" 0 0 640 750
+1.0 3.7 2 2.34 0 0
+
+l 1 4.8 -1.55 6.0 3.5
+0.0 9.0
+3
+0.7 0.65 0.5 400
+0.6 0.61 0.57 400
+0.65 0.63 0.54 400
+
+e "resources/sprites/distortion.png" 0 0 256 256
+4.335 -0.585 1.0 1.0 -20.0 0
+"resources/effects/campfire.txt"
+2
+rise_factor 0.33
+distortion_factor 0.35
+
+e "resources/sprites/distortion2.png" 0 0 256 256
+-1.0 -2.0 0.8 1.1 0.0 0
+"resources/effects/anomaly.txt"
+2
+time_factor 0.33
+distortion_factor 0.75
+
+s "resources/sprites/sprites/bush1.png" 0 0 289 227
+0.3 4.2 2.89 2.27 0.5 0

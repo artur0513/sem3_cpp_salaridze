@@ -1,0 +1,88 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+const float PI = 3.14159265358979;
+const float THRESHOLD = 0.01; // Минимальная alpha с которой считаем, что встретили препятствие
+const int MAX_LIGHT_COUNT = 32; // Максимальное количество источников света
+const float STEPS = 256.0; // Сколько шагов вдоль луча для текста делаем
+
+uniform sampler2D obstacle_map; // Карта препятствий (она же - синий цвет на текстуре height_map)
+
+uniform vec2 light_map_resolution; // Разрешение карты освещения (разрешение по Y должно делится на MAX_LIGHT_COUNT)
+uniform vec2 world_camera_size; // соотношение сторон
+
+uniform vec4 light_positions[MAX_LIGHT_COUNT]; // x, y - координаты, z, w - размер
+uniform vec2 light_directions[MAX_LIGHT_COUNT]; // Направление источников света, x - направление (биссектриса угла, которую охватывает луч), y - половина меры угла
+uniform int light_count; // Реальное количество источников света
+
+void main() {
+    int lightnum = int(floor(gl_TexCoord[0].y * float(MAX_LIGHT_COUNT))); // Определяем номер источника света по Y
+	int obstaclenum = int( floor((gl_TexCoord[0].y - float(lightnum)/float(MAX_LIGHT_COUNT))*light_map_resolution.y) ); // Номер встречаемого препятствия, которое ищем
+	
+	vec2 lightPosition; // Введем пару новых переменных для удобства
+	vec2 lightSize;
+	vec2 lightDir;
+	
+	if (lightnum >= light_count){ // Если источника с таким номером просто нету, то ничего не делаем
+		gl_FragColor = vec4(0.0);
+		return;
+	}
+	else { // Берем параметры источника света, если таой источник есть
+		lightPosition = light_positions[lightnum].xy;
+		lightSize = light_positions[lightnum].zw;
+		lightDir = light_directions[lightnum];
+	}
+	
+	float angle = gl_TexCoord[0].x * (2.0 * PI); // Угол для теста, вдоль которого пускаем луч
+	if (mod(atan(sin(angle), cos(angle)*world_camera_size.x / world_camera_size.y) - lightDir.x, 2.0*PI) > lightDir.y){ // Если этот угол не попадает в ту область, куда светит луч, то ничего не делаем
+		gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+		return;
+	}
+	
+    float light_radius = 1.0/sqrt(pow(cos(angle)/lightSize.x, 2.0) + pow(sin(angle)/lightSize.y, 2.0)); // Радиус источника вдоль данного луча(т.к. это эллипс)
+	
+	float dst = light_radius; // Координаты начала области тени
+	float dst2 = light_radius; // Координаты конца области тени
+	
+	bool in_obstacle = false; // Находимся ли сейчас внутри препятствия
+	bool last_step_in_obstacle = false; // Находились ли на предыдущем шаге внутри препятствия
+	float max_b = 0.0; // Ищем максимальное значение синего цвета внутри препятстия
+	int obstacle_counter = 0; // счетчик, сколько препятствий встретили
+	
+	for (float i = 0.0; i < STEPS; i += 1.0){
+		float distance = i * light_radius/STEPS; // Расстояние поиска меняется от 0 до light_radius
+		vec2 coord = vec2(cos(angle) * distance, sin(angle)* distance);
+		coord += lightPosition; // Координаты пикселя для проверки
+		coord = clamp(coord, 0.0, 1.0); // Не выходим за пределы текстуры
+		
+		vec4 data = texture2D(obstacle_map, coord); // Находим этот пиксель на карте препятствий
+
+		if (data.b > THRESHOLD && data.a > 0.8) { // Если есть препятствие, записываем расстояние и прекращаем поиск.
+            in_obstacle = true;
+			max_b = max(max_b, data.b); // Ищем внутри препятствия максимальный синий цвет
+        }
+		else {
+			in_obstacle = false;
+		}
+		
+		if (in_obstacle && !last_step_in_obstacle && obstacle_counter == obstaclenum){ // Если вошли в препятствие, то запоминаем координаты где вошли
+			dst = distance;
+		}
+		
+		if (!in_obstacle && last_step_in_obstacle){
+			if (obstacle_counter == obstaclenum){
+				dst2 = distance + max_b * 25.5 / world_camera_size.y;
+				break;
+			}
+			obstacle_counter += 1; // Счетчик препятствий обновляем когда выходим из препятствия, разницы нету
+		}
+		
+		last_step_in_obstacle = in_obstacle;
+		if(!in_obstacle){
+			max_b = 0.0;
+		}
+	}	
+	
+    gl_FragColor = vec4(dst / light_radius, dst2 / light_radius, 0.0, 1.0);
+}

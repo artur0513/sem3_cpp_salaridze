@@ -1,0 +1,230 @@
+// Author @patriciogv - 2015
+// http://patriciogonzalezvivo.com
+//https://thebookofshaders.com/13/ - генерируемый туман взят отсюда с небольшими изменениями
+
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#extension GL_EXT_gpu_shader4 : enable // Чтобы не было предупреждений при использвании unit и чего то еще
+#extension GL_ARB_shader_bit_encoding : enable
+#extension GL_ARB_gpu_shader5 : enable
+
+const float MAX_HEIGHT = 0.8;
+
+//uniform vec2 u_resolution; // Разрешение картинки
+uniform float u_time; // Время
+uniform sampler2D diffuse_result;
+uniform sampler2D height_result;
+
+uniform vec2 wind_speed; // Скорость ветра (относительно камеры)
+uniform vec2 wind_dist;
+uniform float fog_height; // Высота тумана
+
+uniform float fog_def; // Сила тумана
+uniform float fog_cloud;
+
+uniform vec2 world_pos; // Параметры камеры
+uniform vec2 world_size;
+
+uniform float rain_strength; // Интенсивность дождя
+
+uniform float cloud_alpha; // Насколько сильную тень отбрасывают облака 
+uniform float cloud_size_reversed; // Размер облаков обратный, т.е. тем больше этот кэф тем меньше облака
+
+// КОД ДЛЯ ГЕНЕРЕЦИИ СЛУЧАЙНЫХ ЧИСЕЛ
+// A single iteration of Bob Jenkins' One-At-A-Time hashing algorithm.
+uint hash( uint x ) {
+    x += ( x << 10u );
+    x ^= ( x >>  6u );
+    x += ( x <<  3u );
+    x ^= ( x >> 11u );
+    x += ( x << 15u );
+    return x;
+}
+// Compound versions of the hashing algorithm I whipped together.
+uint hash( uvec2 v ) { return hash( v.x ^ hash(v.y)                         ); }
+uint hash( uvec3 v ) { return hash( v.x ^ hash(v.y) ^ hash(v.z)             ); }
+uint hash( uvec4 v ) { return hash( v.x ^ hash(v.y) ^ hash(v.z) ^ hash(v.w) ); }
+// Construct a float with half-open range [0:1] using low 23 bits.
+// All zeroes yields 0.0, all ones yields the next smallest representable value below 1.0.
+float floatConstruct( uint m ) {
+    const uint ieeeMantissa = 0x007FFFFFu; // binary32 mantissa bitmask
+    const uint ieeeOne      = 0x3F800000u; // 1.0 in IEEE binary32
+
+    m &= ieeeMantissa;                     // Keep only mantissa bits (fractional part)
+    m |= ieeeOne;                          // Add fractional part to 1.0
+
+    float  f = uintBitsToFloat( m );       // Range [1:2]
+    return f - 1.0;                        // Range [0:1]
+}
+// Pseudo-random value in half-open range [0:1].
+float random_adv( float x ) { return floatConstruct(hash(floatBitsToUint(x))); }
+float random_adv( vec2  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
+float random_adv( vec3  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
+float random_adv( vec4  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
+
+vec4 combine_colors(vec4 col1, vec4 col2){ // Наложение цветов с учетом альфа канала
+	vec4 ans;
+	ans.a = 1.0 - (1.0 - col1.a)*(1.0 - col2.a);
+	ans.r = (col1.r * col1.a * (1.0 - col2.a) + col2.r*col2.a)/ans.a;
+	ans.g = (col1.g * col1.a * (1.0 - col2.a) + col2.g*col2.a)/ans.a;
+	ans.b = (col1.b * col1.a * (1.0 - col2.a) + col2.b*col2.a)/ans.a;
+	return ans;
+}
+
+float color_to_height(vec2 color){
+	float ans;
+	ans = color.r*0.85 + floor(color.g*255.0)*0.85;
+	return ans;
+}
+
+float random (in vec2 _st) {
+    return fract(sin(dot(_st.xy, vec2(12.9898,78.233)))*43758.5453123);
+}
+
+// Based on Morgan McGuire @morgan3d
+// https://www.shadertoy.com/view/4dS3Wd
+float noise (in vec2 _st) {
+    vec2 i = floor(_st);
+    vec2 f = fract(_st);
+
+    // Four corners in 2D of a tile
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(a, b, u.x) +
+            (c - a)* u.y * (1.0 - u.x) +
+            (d - b) * u.x * u.y;
+}
+
+#define NUM_OCTAVES 4
+
+float fbm ( in vec2 _st) {
+    float v = fog_def; // "Сила" тумана по умолчанию (там где не облачков маленьких)
+    float a = fog_cloud; // "Сила" накладываемых облачков
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(cos(0.5), sin(0.5),
+                    -sin(0.5), cos(0.50));
+    for (int i = 0; i < NUM_OCTAVES; ++i) {
+        v += a * noise(_st);
+        _st = rot * _st * 2.5 + shift; // Коэффициент здесь отвечает за масштаб(при большом это больше напоминает скорее воду)
+        a *= 0.4; // Влияет на размытость тумана, при больших значениях опять похоже на воду
+    }
+    return v;
+}
+
+float fbm_for_clouds ( in vec2 st) {
+    float value = -0.1;
+    float amplitude = .5;
+    float frequency = 0.;
+
+    for (int i = 0; i < 2; i++) {
+        value += amplitude * noise(st);
+        st *= 2.;
+        amplitude *= .5;
+    }
+    return value;
+}
+
+void main() {
+	vec4 fog_color = vec4(0.0);
+	
+	vec2 world_point_pos = vec2(world_pos.x - world_size.x*0.5 + gl_TexCoord[0].x*world_size.x, - world_pos.y - world_size.y*0.5 + gl_TexCoord[0].y*world_size.y);
+	
+	// Дождь накладывается в несколько этапов(итераций) с разными размерами капель
+	vec2 rain_check;
+	vec4 rain_color = vec4(0.0);
+	
+	// Первая итерация (мелкие капли) - тут капли привязаны к мировым координатам
+	rain_check.y = floor((world_point_pos.y - u_time*11.0)*7.0);
+	rain_check.x = floor((world_point_pos.x - world_point_pos.y*wind_speed.x*0.2)*50.0);
+	if (random_adv(rain_check) < rain_strength*1.5){
+		rain_color = vec4(0.55, 0.55, 0.7, 0.45);
+	}
+	// Вторая итерация (крупные) - тут капли привязаны к мировым координатам
+	rain_check.y = floor((world_point_pos.y - u_time*10.0)*5.0) + 145;
+	rain_check.x = floor((world_point_pos.x - world_point_pos.y*wind_speed.x*0.17)*35.0) + 397;
+	if (random_adv(rain_check) < rain_strength*0.75){
+		rain_color = vec4(0.6, 0.6, 0.65, 0.55);
+	}
+	// Третья итерация (средние) - тут капли привязаны к мировым координатам
+	rain_check.y = floor((world_point_pos.y - u_time*12.0)*6.0) + 357;
+	rain_check.x = floor((world_point_pos.x - world_point_pos.y*wind_speed.x*0.23)*42.5) + 184;
+	if (random_adv(rain_check) < rain_strength*1.25){
+		rain_color = vec4(0.55, 0.55, 0.65, 0.6);
+	}
+	// Четвертая итерация (очень крупные) - тут капли привязаны к мировым координатам
+	rain_check.y = floor((world_point_pos.y - u_time*9.5)*4.0) + 668;
+	rain_check.x = floor((world_point_pos.x - world_point_pos.y*wind_speed.x*0.15)*25.0) + 444;
+	if (random_adv(rain_check) < rain_strength*0.5){
+		rain_color = vec4(0.6, 0.6, 0.8, 0.3);
+	}
+	
+	// Пятая итерация (мелкие капли) - тут капли привязаны к экранным координатам, чтобы дождь был виден при большом масштабе
+	rain_check.y = floor((gl_TexCoord[0].y - world_pos.y/world_size.y - u_time)/0.015) + 3948;
+	rain_check.x = floor((gl_TexCoord[0].x + world_pos.x/world_size.x - gl_TexCoord[0].y*wind_speed.x*0.100)*1000.0) + 435;
+	if (random_adv(rain_check) < rain_strength){
+		rain_color = vec4(0.5, 0.5, 0.8, 0.4);
+	}
+	// Шестая итерация (крупные) - тут капли привязаны к экранным координатам, чтобы дождь был виден при большом масштабе
+	rain_check.y = floor((gl_TexCoord[0].y - world_pos.y/world_size.y - u_time*1.25)/0.027) + 5678;
+	rain_check.x = floor((gl_TexCoord[0].x + world_pos.x/world_size.x - gl_TexCoord[0].y*wind_speed.x*0.112)*600.0) + 466;
+	if (random_adv(rain_check) < rain_strength*0.75){
+		rain_color = vec4(0.6, 0.6, 0.65, 0.5);
+	}
+	
+	float height = color_to_height(texture2D(height_result, vec2(gl_TexCoord[0].x, 1.0 - gl_TexCoord[0].y)).rg);
+	
+	
+    vec2 st = - wind_dist + vec2(world_pos.x - world_size.x*0.5 + gl_TexCoord[0].x*world_size.x, - world_pos.y - world_size.y*0.5 + gl_TexCoord[0].y*world_size.y);
+	st *= 0.33;
+    vec3 color = vec3(0.0);
+
+    vec2 q = vec2(0.);
+    q.x = fbm( st + 0.00*u_time);
+    q.y = fbm( st + vec2(1.0));
+
+    vec2 r = vec2(0.);
+    r.x = fbm( st + 1.0*q + vec2(1.7,9.2)+ 0.08*u_time );
+    r.y = fbm( st + 1.0*q + vec2(8.3,2.8)+ 0.06*u_time);
+
+    float f = fbm(st+r);
+
+    color = mix(vec3(0.455,0.622,0.667),
+                vec3(0.491,0.667,0.557),
+                clamp((f*f)*4.0,0.0,1.0));
+
+    color = mix(color,
+                vec3(0,0,0.164706),
+                clamp(length(q),0.0,1.0));
+
+    color = mix(color,
+                vec3(0.769,0.932,1.000),
+                clamp(length(r.x),0.0,1.0));
+	
+	//color = vec3(0.6);
+	
+    fog_color = vec4((f*f*f+.6*f*f+.5*f)*color, 0.2);
+	
+	
+	float fog_height_koeff = 1.0;
+	if (height > fog_height && height < fog_height * (1.0 + MAX_HEIGHT)){
+		fog_height_koeff = 1.0 - (height/fog_height - 1.0)/MAX_HEIGHT;
+	}
+	if (height >= fog_height * (1.0 + MAX_HEIGHT)){
+		fog_height_koeff = 0.0;
+	}
+	
+	vec4 base_color = texture2D(diffuse_result, vec2(gl_TexCoord[0].x, 1.0 - gl_TexCoord[0].y));
+	base_color = combine_colors(base_color, fog_color*fog_height_koeff);
+	//base_color = combine_colors(base_color, vec4(0.0, 0.0, 0.0, fbm_for_clouds(st)*0.5));
+	base_color.rgb *= 1.0 - fbm_for_clouds(st*cloud_size_reversed)*cloud_alpha;
+	gl_FragColor = combine_colors(base_color, rain_color);
+
+}

@@ -1,0 +1,102 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+const float PI = 3.14159265358979;
+const float STEP = 0.004; // Сколько шагов делаю вдоль луча
+const int MAX_LIGHT_COUNT = 32; // Максимальное колическтво истоников света
+const float THRESHOLD = 0.05;
+
+const float ANGLE_CHECK_SHIFT = 0.0053;
+
+uniform vec3 def_color; //цвет неосвещенной области
+uniform sampler2D light_map; // Карта с информацией об источниках освещения
+uniform sampler2D height_map; // Карта высот
+uniform sampler2D normal_map;
+uniform vec2 world_camera_size; // Размер камеы для корректного использования карты высот
+uniform vec2 light_map_resolution; // Разрешение карты освещения (разрешение по Y должно делится на MAX_LIGHT_COUNT)
+
+uniform vec4 light_positions[MAX_LIGHT_COUNT]; // x, y - координаты, z, w - размер
+uniform vec3 light_colors[MAX_LIGHT_COUNT]; // цвета источников в том же порядке, что и координаты
+uniform int light_count; // Реальное количество источников света
+
+float color_to_screen_shift(vec2 color){
+	float ans;
+	ans = color.r*0.85 + floor(color.g*255.0)*0.85;
+	return (ans/world_camera_size.y);
+}
+
+float rel_point_to_screen_shift(float x, float y){
+	float shift = color_to_screen_shift(texture2D(height_map, vec2(gl_TexCoord[0].x + x, gl_TexCoord[0].y + y)).xy);
+	if (shift < 0.005)
+		return color_to_screen_shift(texture2D(height_map, vec2(gl_TexCoord[0].x, gl_TexCoord[0].y)).xy);
+	else
+		return shift;
+}
+
+void main() {
+    vec3 color = def_color;
+    vec2 point = gl_TexCoord[0].xy;
+	float lightLookupHalfStep = 0.5/float(light_map_resolution.y);
+	
+	float height = color_to_screen_shift(texture2D(height_map, gl_TexCoord[0].xy).xy);
+	point.y -= height;
+	
+	float real_height = height * world_camera_size.y; // Реальная высота точки в мире
+	
+    for (int light_num = 0; light_num < light_count; light_num += 1){
+		vec2 light_size = light_positions[light_num].zw;
+		vec2 light_pos = light_positions[light_num].xy;
+		vec3 light_col = light_colors[light_num];
+		
+		vec2 point_to_light = point - light_pos; // Проверяем попадает ли точка вообще в освещенную область
+		float angle = atan((point_to_light).y, (point_to_light).x);
+		if (angle < 0.0){
+			angle += 2.0 * PI;
+		}
+		float light_radius = 1.0/sqrt(pow(cos(angle)/light_size.x, 2.0) + pow(sin(angle)/light_size.y, 2.0));
+		float corr_lenth = length(point_to_light) / light_radius; // Нормированная рассточние до источника
+		if (corr_lenth > 1.0)
+			continue;
+		
+		bool visible = true; // Проверяем нет ли препятствия
+		float damping_factor = 0.0;
+		
+		float brightness_angle_koeff = 1.0; // Угол наклона поверхности
+		if (height > 0.005){
+			vec2 normal_vec_global = normalize(texture2D(normal_map, point).xy - vec2(0.5, 0.5));
+			vec2 normal_vec_screenspace;
+			normal_vec_screenspace.x = (normal_vec_global.y - normal_vec_global.x)*0.7071;
+			normal_vec_screenspace.y = -(normal_vec_global.y + normal_vec_global.x)*0.7071;
+			brightness_angle_koeff = dot(normal_vec_screenspace, normalize(point_to_light));
+			brightness_angle_koeff = clamp(0.0, 1.0, brightness_angle_koeff);
+		}
+		
+		float angleCoordOnMap = angle / (2.0 * PI); // Координаты данного угла на карте с источниками
+		
+		for (float i = 0.0; i < 1.0/float(MAX_LIGHT_COUNT); i += 1.0/light_map_resolution.y){
+			float y_coord = float(light_num)/float(MAX_LIGHT_COUNT) + i + lightLookupHalfStep; // Координата источника на карте теней
+			
+			vec4 light_map_color = texture2D(light_map, vec2(angleCoordOnMap, 1.0 - y_coord));
+			if(corr_lenth > light_map_color.r && corr_lenth < light_map_color.g){
+				visible = false;
+				
+				damping_factor = (corr_lenth - light_map_color.r)/(light_map_color.g - light_map_color.r);
+				if (light_map_color.g > 1.0 - THRESHOLD)
+					damping_factor = 0.0;
+			}
+		}
+		
+		if (visible){
+			color += light_col * smoothstep(0.0, 1.0, 1.0 - corr_lenth) * brightness_angle_koeff * clamp(1.0 - 0.5*height*world_camera_size.y, 0.0, 1.0); // ПЕРЕДЕЛАТЬ СИСТЕМУ ЗАВИСИМОСТИ ОТ ВЫСОТЫ К РЕАЛЬНЫХ КООРДИНАТАМ
+		}
+		else {
+			color += light_col * pow(damping_factor, 3.0) * smoothstep(0.0, 1.0, 1.0 - corr_lenth) * brightness_angle_koeff * clamp(1.0 - 0.5*height*world_camera_size.y, 0.0, 1.0);
+		}
+		
+    }
+	
+	color /= 1.2; // Делим на 2 для возможности осветления картинки
+    gl_FragColor = vec4(color.r, color.g, color.b, 1.0);
+}
+

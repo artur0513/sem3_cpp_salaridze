@@ -1,0 +1,12 @@
+config/objects/road.txt
+config/objects/grass.txt
+config/objects/lamppost.txt
+8
+config/objects/stumps.txt
+config/objects/vagon.txt
+config/objects/tree0.txt
+config/objects/tree1.txt
+config/objects/campfire.txt
+config/objects/field0.txt
+config/objects/field1.txt
+config/objects/field2.txt

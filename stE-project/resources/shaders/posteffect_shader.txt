@@ -1,0 +1,103 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+#extension GL_EXT_gpu_shader4 : enable
+#extension GL_ARB_shader_bit_encoding : enable
+#extension GL_ARB_gpu_shader5 : enable
+
+uniform sampler2D texture; // Текстура на которую собственно 
+uniform vec2 texture_size; // Размер текстуры в пикселях
+
+uniform vec3 color_correction_r; // Цветокор
+uniform vec3 color_correction_g;
+uniform vec3 color_correction_b;
+
+uniform float corner_shading_radius; // Затенение по краям экрана (радиус)
+uniform vec4 corner_shading_color; // Цвет, по альфа каналу - альфа которая будет в самом углу экрана
+
+uniform float corner_blur_radius; // Радиус размытия по краям экрана
+uniform float corner_blur_strength; // Сила размытия по краям экрана (порядка 0.01 ~ 0.1) ПЕРЕПИСАТЬ ЧЕРЕЗ УМНОЖЕНИЕ ЦВЕТОВ
+
+uniform float time; // Время для генерации случайных числе
+uniform float noise_alpha; // Прозрачность шума
+uniform float noise_fps; // фпс отрисовки шума
+uniform float noise_size; // размер зерен шума в пикселях
+
+uniform float aberration_radius;
+uniform float aberration_shift;
+
+uniform float gamma;
+
+vec4 combine_colors(vec4 col1, vec4 col2){ // Наложение цветов с учетом альфа канала
+	vec4 ans;
+	ans.a = 1.0 - (1.0 - col1.a)*(1.0 - col2.a);
+	ans.r = (col1.r * col1.a * (1.0 - col2.a) + col2.r*col2.a)/ans.a;
+	ans.g = (col1.g * col1.a * (1.0 - col2.a) + col2.g*col2.a)/ans.a;
+	ans.b = (col1.b * col1.a * (1.0 - col2.a) + col2.b*col2.a)/ans.a;
+	return ans;
+}
+
+// КОД ДЛЯ ГЕНЕРЕЦИИ СЛУЧАЙНЫХ ЧИСЕЛ
+// A single iteration of Bob Jenkins' One-At-A-Time hashing algorithm.
+uint hash( uint x ) {
+    x += ( x << 10u );
+    x ^= ( x >>  6u );
+    x += ( x <<  3u );
+    x ^= ( x >> 11u );
+    x += ( x << 15u );
+    return x;
+}
+// Compound versions of the hashing algorithm I whipped together.
+uint hash( uvec2 v ) { return hash( v.x ^ hash(v.y)                         ); }
+uint hash( uvec3 v ) { return hash( v.x ^ hash(v.y) ^ hash(v.z)             ); }
+uint hash( uvec4 v ) { return hash( v.x ^ hash(v.y) ^ hash(v.z) ^ hash(v.w) ); }
+// Construct a float with half-open range [0:1] using low 23 bits.
+// All zeroes yields 0.0, all ones yields the next smallest representable value below 1.0.
+float floatConstruct( uint m ) {
+    const uint ieeeMantissa = 0x007FFFFFu; // binary32 mantissa bitmask
+    const uint ieeeOne      = 0x3F800000u; // 1.0 in IEEE binary32
+
+    m &= ieeeMantissa;                     // Keep only mantissa bits (fractional part)
+    m |= ieeeOne;                          // Add fractional part to 1.0
+
+    float  f = uintBitsToFloat( m );       // Range [1:2]
+    return f - 1.0;                        // Range [0:1]
+}
+// Pseudo-random value in half-open range [0:1].
+float random( float x ) { return floatConstruct(hash(floatBitsToUint(x))); }
+float random( vec2  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
+float random( vec3  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
+float random( vec4  v ) { return floatConstruct(hash(floatBitsToUint(v))); }
+
+vec4 get_aberration_color(vec2 pos, float abb_r){
+	vec4 color;
+	color.r=texture2D(texture, (pos+aberration_shift*abb_r)).r;
+    color.ga=texture2D(texture, pos).ga;
+    color.b=texture2D(texture, (pos-aberration_shift*abb_r)).b;
+	return color;
+}
+
+void main() {
+	vec2 pos = vec2(gl_TexCoord[0].x, 1.0-gl_TexCoord[0].y);
+	
+	vec4 base_color = texture2D(texture, vec2(pos.x, pos.y));
+	
+	float abb_r = pow(max(length(pos - vec2(0.5, 0.5)) - aberration_radius, 0.0), 2.0);
+	
+	base_color = get_aberration_color(pos, abb_r);
+	
+	float corner_shading_alpha = clamp((length(pos - vec2(0.5, 0.5)) - corner_shading_radius)/sqrt(2.0), 0.0, 1.0)*corner_shading_color.a;
+	base_color = combine_colors(base_color, vec4(corner_shading_color.rgb, corner_shading_alpha));
+	
+	float random_output = random(vec3(floor(gl_TexCoord[0].x * texture_size.x / noise_size), floor(gl_TexCoord[0].y * texture_size.y / noise_size), floor(time*noise_fps)));
+	base_color = combine_colors(base_color, vec4(vec3(random_output), noise_alpha)); // Шум, с обновлением в 24.0 фпс
+	
+	vec4 output_color;
+	output_color.a = base_color.a;
+	output_color.r = dot(color_correction_r, base_color.rgb);
+	output_color.g = dot(color_correction_g, base_color.rgb); 
+	output_color.b = dot(color_correction_b, base_color.rgb); 
+	
+    gl_FragColor = vec4(pow(output_color.r, gamma), pow(output_color.g, gamma), pow(output_color.b, gamma), output_color.a);
+}
