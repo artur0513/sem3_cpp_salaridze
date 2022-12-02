@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "Common.h"
 #include "Graphics.h"
 
@@ -12,12 +12,12 @@ private:
 	vector<gr::Light_source*> lights;
 	//vector<gr::Effect> effects;
 
-	bool brake = false; // Давим по тормозам
-	bool throtle = false; // Давим по газам
+	bool brake = false; // Р”Р°РІРёРј РїРѕ С‚РѕСЂРјРѕР·Р°Рј
+	bool throtle = false; // Р”Р°РІРёРј РїРѕ РіР°Р·Р°Рј
 	bool turn_down = false;
 	bool turn_up = false;
 	bool starter = false;
-	bool front_lights = false; // Дальний свет
+	bool front_lights = false; // Р”Р°Р»СЊРЅРёР№ СЃРІРµС‚
 	bool engine_on = false;
 	
 	double clutch_koef = 0.0;
@@ -26,10 +26,10 @@ private:
 	Time tick_time;
 
 	int rpm = 0, def_rpm = 800;
-	vector<pair<double, int>> power; // мощность - обороты
-	vector<double> shift_koef; // передаточные отношения
+	vector<pair<double, int>> power; // РјРѕС‰РЅРѕСЃС‚СЊ - РѕР±РѕСЂРѕС‚С‹
+	vector<double> shift_koef; // РїРµСЂРµРґР°С‚РѕС‡РЅС‹Рµ РѕС‚РЅРѕС€РµРЅРёСЏ
 
-	unsigned short gear = 0; // Передача
+	unsigned short gear = 0; // РџРµСЂРµРґР°С‡Р°
 
 	Font font;
 	Text hud_text;
@@ -38,7 +38,7 @@ private:
 
 public:
 	double distance_travel = 0.0;
-	double fuel, max_fuel; // Литров в баке
+	double fuel, max_fuel; // Р›РёС‚СЂРѕРІ РІ Р±Р°РєРµ
 	double hp = 100.0;
 
 	double power_boost = 1.0;
@@ -50,7 +50,7 @@ public:
 	Vector2d collider_pos;
 	Vector2d collider_size;
 	RenderTexture car_hud;
-	Vector2d pos = Vector2d(0.0, 0.0), speed = Vector2d(0.0, 0.0), acceleration = Vector2d(0.0, 0.0); // Координаты (центра), скорость, ускорение
+	Vector2d pos = Vector2d(0.0, 0.0), speed = Vector2d(0.0, 0.0), acceleration = Vector2d(0.0, 0.0); // РљРѕРѕСЂРґРёРЅР°С‚С‹ (С†РµРЅС‚СЂР°), СЃРєРѕСЂРѕСЃС‚СЊ, СѓСЃРєРѕСЂРµРЅРёРµ
 
 	Car(gr::Graphics_engine* _eng);
 

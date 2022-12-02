@@ -1,7 +1,7 @@
-#pragma once
+п»ї#pragma once
 #include "Console.h"
 
-Color Console::type_to_color(ConsoleMessageType type) { // Тип ошибки превращает в цвет
+Color Console::type_to_color(ConsoleMessageType type) { // РўРёРї РѕС€РёР±РєРё РїСЂРµРІСЂР°С‰Р°РµС‚ РІ С†РІРµС‚
 	switch (type) {
 	case ConsoleMessageType::DEF:
 		return Color(255, 255, 255, 255);
@@ -31,7 +31,7 @@ Console::Console(Vector2u _size) {
 	sprite.setTexture(console_texture.getTexture());
 	
 
-	// Шрифт должен быть monospaced, ниже идет вычисление средней длины символа шрифта
+	// РЁСЂРёС„С‚ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ monospaced, РЅРёР¶Рµ РёРґРµС‚ РІС‹С‡РёСЃР»РµРЅРёРµ СЃСЂРµРґРЅРµР№ РґР»РёРЅС‹ СЃРёРјРІРѕР»Р° С€СЂРёС„С‚Р°
 	string test = "!#$ % &()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 	text.setString(test);
 	avg_symbol_size.x = offset_koeff.x * float(text.getGlobalBounds().width) / float(test.size());
@@ -47,7 +47,7 @@ void Console::log(string msg, ConsoleMessageType type) {
 
 	msg = "[" + get_time_string() + "] " + msg;
 
-	// Если текст нового сообщения совпадает с предыдущим сообщением, то не будем их повторять
+	// Р•СЃР»Рё С‚РµРєСЃС‚ РЅРѕРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ СЃРѕРІРїР°РґР°РµС‚ СЃ РїСЂРµРґС‹РґСѓС‰РёРј СЃРѕРѕР±С‰РµРЅРёРµРј, С‚Рѕ РЅРµ Р±СѓРґРµРј РёС… РїРѕРІС‚РѕСЂСЏС‚СЊ
 	if (messages.size() > 0)
 		if (msg == messages[messages.size() - 1].first)
 			return;

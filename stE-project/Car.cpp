@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Car.h"
 
 Car::Car(gr::Graphics_engine* _eng) {
@@ -18,13 +18,13 @@ void Car::load_from_file(ifstream& file) {
 	file >> n;
 	shift_koef.resize(n+1);
 	shift_koef[0] = 0;
-	for (int i = 0; i < n; i++) { // Ïåðåäà÷è
+	for (int i = 0; i < n; i++) { // ÐŸÐµÑ€ÐµÐ´Ð°Ñ‡Ð¸
 		file >> shift_koef[i + 1];
 	}
 
 	file >> n;
 	power.resize(n);
-	for (int i = 0; i < n; i++) { // Ìîùíîñòü
+	for (int i = 0; i < n; i++) { // ÐœÐ¾Ñ‰Ð½Ð¾ÑÑ‚ÑŒ
 		file >> power[i].first >> power[i].second;
 	}
 
@@ -195,7 +195,7 @@ void Car::update() {
 		}
 	}
 
-	// Ëîãèêà ðàáîòû çàäíèõ ôàð
+	// Ð›Ð¾Ð³Ð¸ÐºÐ° Ñ€Ð°Ð±Ð¾Ñ‚Ñ‹ Ð·Ð°Ð´Ð½Ð¸Ñ… Ñ„Ð°Ñ€
 	if (brake && engine_on) {
 		lights[0]->active = false;
 		lights[1]->active = false;
@@ -213,7 +213,7 @@ void Car::update() {
 		lights[5]->active = false;
 	}
 
-	//Ëîãèêà ðàáîòû ïåðåäíèõ ôàð
+	//Ð›Ð¾Ð³Ð¸ÐºÐ° Ñ€Ð°Ð±Ð¾Ñ‚Ñ‹ Ð¿ÐµÑ€ÐµÐ´Ð½Ð¸Ñ… Ñ„Ð°Ñ€
 	if (engine_on && !front_lights) {
 		lights[2]->active = true;
 		lights[3]->active = true;

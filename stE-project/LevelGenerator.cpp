@@ -1,4 +1,4 @@
-#include "LevelGenerator.h"
+п»ї#include "LevelGenerator.h"
 
 Static_object::Static_object(std::string filename, gr::Graphics_engine* _eng) {
 	eng = _eng;
@@ -164,7 +164,7 @@ Static_object& Static_object::operator=(Static_object&& obj) {
 	return *this;
 }
 
-Static_object::~Static_object() {}; // Всю графическую фигню удалит графический движок, мы ничего не делаем
+Static_object::~Static_object() {}; // Р’СЃСЋ РіСЂР°С„РёС‡РµСЃРєСѓСЋ С„РёРіРЅСЋ СѓРґР°Р»РёС‚ РіСЂР°С„РёС‡РµСЃРєРёР№ РґРІРёР¶РѕРє, РјС‹ РЅРёС‡РµРіРѕ РЅРµ РґРµР»Р°РµРј
 
 void Static_object::move(Vector2d vec) {
 	for (int i = 0; i < diffuse.size(); i++)

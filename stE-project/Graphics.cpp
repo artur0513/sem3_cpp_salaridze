@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "Graphics.h"
 #include "simple-opengl-loader.h"
 #include <filesystem>
@@ -59,20 +59,20 @@ template<> bool gr::Resource_manager<Shader>::load_object_from_file(Shader* new_
 }
 
 
-void gr::Animation::add_frame(Sprite _sprite, Time _time) { // Добавляем кадр
+void gr::Animation::add_frame(Sprite _sprite, Time _time) { // Р”РѕР±Р°РІР»СЏРµРј РєР°РґСЂ
 	number_of_frames += 1;
 	full_animation_time += _time;
 	frames.push_back(pair<Sprite, Time>(_sprite, full_animation_time));
 }
 
-Sprite* gr::Animation::get_frame(Time _time) { // Возвращает указатель на текущий спрайт в зависимости от времени
+Sprite* gr::Animation::get_frame(Time _time) { // Р’РѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‚РµРєСѓС‰РёР№ СЃРїСЂР°Р№С‚ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РІСЂРµРјРµРЅРё
 	_time %= full_animation_time * speed_koeff;
-	for (unsigned short i = 0; i < number_of_frames; i++) { // Здесь можно поставить бин поиск для небольшого выигрыша в производительности
+	for (unsigned short i = 0; i < number_of_frames; i++) { // Р—РґРµСЃСЊ РјРѕР¶РЅРѕ РїРѕСЃС‚Р°РІРёС‚СЊ Р±РёРЅ РїРѕРёСЃРє РґР»СЏ РЅРµР±РѕР»СЊС€РѕРіРѕ РІС‹РёРіСЂС‹С€Р° РІ РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЊРЅРѕСЃС‚Рё
 		if (_time < frames[i].second * speed_koeff) {
-			return &frames[i].first; // как только нашли кадр, время до которого больше нужного, возвращаем
+			return &frames[i].first; // РєР°Рє С‚РѕР»СЊРєРѕ РЅР°С€Р»Рё РєР°РґСЂ, РІСЂРµРјСЏ РґРѕ РєРѕС‚РѕСЂРѕРіРѕ Р±РѕР»СЊС€Рµ РЅСѓР¶РЅРѕРіРѕ, РІРѕР·РІСЂР°С‰Р°РµРј
 		}
 	}
-	return &frames[0].first; // на всякий случай вернем какой нибудь кадр если ничего не нашли(хотя по идее это невозможно?)
+	return &frames[0].first; // РЅР° РІСЃСЏРєРёР№ СЃР»СѓС‡Р°Р№ РІРµСЂРЅРµРј РєР°РєРѕР№ РЅРёР±СѓРґСЊ РєР°РґСЂ РµСЃР»Рё РЅРёС‡РµРіРѕ РЅРµ РЅР°С€Р»Рё(С…РѕС‚СЏ РїРѕ РёРґРµРµ СЌС‚Рѕ РЅРµРІРѕР·РјРѕР¶РЅРѕ?)
 }
 
 Time gr::Animation::get_frame_time(unsigned short i) {
@@ -90,7 +90,7 @@ IntRect gr::Animation::get_texture_rect(unsigned short i) {
 }
 
 bool gr::Sprite_object::var_update(Camera& cam) {
-	// Проверяем видимость обьекта
+	// РџСЂРѕРІРµСЂСЏРµРј РІРёРґРёРјРѕСЃС‚СЊ РѕР±СЊРµРєС‚Р°
 	DoubleRect check_rect = cam.world_rect;
 	check_rect.height += world_size.y;
 	check_rect.left -= world_size.x;
@@ -98,30 +98,30 @@ bool gr::Sprite_object::var_update(Camera& cam) {
 	//check_rect.top += world_size.y;
 
 	//check_rect.contains(world_pos)
-	if (!(world_pos.y < cam.corner_pos.y - cam.world_size.y || world_pos.y - world_size.y > cam.corner_pos.y || world_pos.x + world_size.x < cam.corner_pos.x || world_pos.x > cam.corner_pos.x + cam.world_size.x)) { // ПРОВЕРКА ОПЯТЬ НЕ РАБОТАЕТ
+	if (!(world_pos.y < cam.corner_pos.y - cam.world_size.y || world_pos.y - world_size.y > cam.corner_pos.y || world_pos.x + world_size.x < cam.corner_pos.x || world_pos.x > cam.corner_pos.x + cam.world_size.x)) { // РџР РћР’Р•Р РљРђ РћРџРЇРўР¬ РќР• Р РђР‘РћРўРђР•Рў
 		visible = true;
 		animation_update();
 	}
 	else {
 		visible = false;
-		return false; // Если обьект невидим, то больше ничего не считаем
+		return false; // Р•СЃР»Рё РѕР±СЊРµРєС‚ РЅРµРІРёРґРёРј, С‚Рѕ Р±РѕР»СЊС€Рµ РЅРёС‡РµРіРѕ РЅРµ СЃС‡РёС‚Р°РµРј
 	}
 
-	// Устанавливаем экранные координаты
+	// РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЌРєСЂР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹
 	current_sprite->setPosition(cam.world_to_camera_pos(world_pos));
 
-	// Устанавливаем нужный масштаб
+	// РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РЅСѓР¶РЅС‹Р№ РјР°СЃС€С‚Р°Р±
 	Vector2f new_scale;
 	new_scale.x = world_size.x * cam.resolution.x / (cam.world_size.x * pixel_local_size.x);
 	new_scale.y = world_size.y * cam.resolution.y / (cam.world_size.y * pixel_local_size.y);
 	current_sprite->setScale(new_scale);
 
-	// Пересчитываем слой отрисовки
+	// РџРµСЂРµСЃС‡РёС‚С‹РІР°РµРј СЃР»РѕР№ РѕС‚СЂРёСЃРѕРІРєРё
 	layer = world_pos.y - world_size.y + delta_layer;
 	return true;
 }
 
-// Обновление анимации обьекта
+// РћР±РЅРѕРІР»РµРЅРёРµ Р°РЅРёРјР°С†РёРё РѕР±СЊРµРєС‚Р°
 void gr::Sprite_object::animation_update() {
 	if (current_animation == -1) {
 		current_sprite = &def_sprite;
@@ -130,15 +130,15 @@ void gr::Sprite_object::animation_update() {
 	current_sprite = animations[current_animation].get_frame(animation_clock.getElapsedTime());
 }
 
-// Считывает спрайт из файла
+// РЎС‡РёС‚С‹РІР°РµС‚ СЃРїСЂР°Р№С‚ РёР· С„Р°Р№Р»Р°
 void gr::Sprite_object::load_from_file(ifstream& file) {
 	Resource_manager<Texture>* mng = Resource_manager<Texture>::get_instance();
 
 	bool reading_texture = false;
 	char buff;
 
-	texture_name.clear(); // На всякий случай очистим имя текстуры перед считыванием
-	// Считывем имя текстуры в кавычках
+	texture_name.clear(); // РќР° РІСЃСЏРєРёР№ СЃР»СѓС‡Р°Р№ РѕС‡РёСЃС‚РёРј РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ РїРµСЂРµРґ СЃС‡РёС‚С‹РІР°РЅРёРµРј
+	// РЎС‡РёС‚С‹РІРµРј РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ РІ РєР°РІС‹С‡РєР°С…
 	while (file >> buff) {
 		if (buff == '"') {
 			if (reading_texture)
@@ -151,22 +151,22 @@ void gr::Sprite_object::load_from_file(ifstream& file) {
 		if (reading_texture)
 			texture_name.push_back(buff);
 	}
-	// Когда считали навзвание текстуры, получаем ссылку на текстуру от менеджера
+	// РљРѕРіРґР° СЃС‡РёС‚Р°Р»Рё РЅР°РІР·РІР°РЅРёРµ С‚РµРєСЃС‚СѓСЂС‹, РїРѕР»СѓС‡Р°РµРј СЃСЃС‹Р»РєСѓ РЅР° С‚РµРєСЃС‚СѓСЂСѓ РѕС‚ РјРµРЅРµРґР¶РµСЂР°
 	texture_name = relative(texture_name).string();
 	Texture* texture = mng->get_object(texture_name);
 
-	IntRect rect; // для Texture Rect
-	int anims, frames_in_anim, frame_time; // Для считывания текстур
+	IntRect rect; // РґР»СЏ Texture Rect
+	int anims, frames_in_anim, frame_time; // Р”Р»СЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ С‚РµРєСЃС‚СѓСЂ
 	file >> rect.left >> rect.top >> rect.width >> rect.height >> world_pos.x >> world_pos.y >> world_size.x >> world_size.y >> delta_layer >> anims;
 
 	def_sprite.setTexture(*texture);
 	def_sprite.setTextureRect(rect);
-	def_sprite.setPosition(Vector2f(10000.f, 10000.f)); // КОСТЫЛЬ ДЛЯ ФИКСА БАГА С КАРТОЙ ВЫСОТ
+	def_sprite.setPosition(Vector2f(10000.f, 10000.f)); // РљРћРЎРўР«Р›Р¬ Р”Р›РЇ Р¤РРљРЎРђ Р‘РђР“Рђ РЎ РљРђР РўРћР™ Р’Р«РЎРћРў
 
 	pixel_local_size.x = def_sprite.getLocalBounds().width;
 	pixel_local_size.y = def_sprite.getLocalBounds().height;
 
-	// Считываем анимации
+	// РЎС‡РёС‚С‹РІР°РµРј Р°РЅРёРјР°С†РёРё
 	for (int j = 0; j < anims; j++) {
 		Animation anim;
 		animations.push_back(anim);
@@ -184,7 +184,7 @@ void gr::Sprite_object::load_from_file(ifstream& file) {
 	current_sprite = &def_sprite;
 }
 
-// Сохранение спрайта в файл
+// РЎРѕС…СЂР°РЅРµРЅРёРµ СЃРїСЂР°Р№С‚Р° РІ С„Р°Р№Р»
 void gr::Sprite_object::save_to_file(ofstream& file) {
 	IntRect rect = def_sprite.getTextureRect();
 	unsigned short anims = animations.size();
@@ -202,7 +202,7 @@ void gr::Sprite_object::save_to_file(ofstream& file) {
 	}
 }
 
-// Вывести короткую информацию о спрайте в консоль
+// Р’С‹РІРµСЃС‚Рё РєРѕСЂРѕС‚РєСѓСЋ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃРїСЂР°Р№С‚Рµ РІ РєРѕРЅСЃРѕР»СЊ
 void gr::Sprite_object::print_info() {
 	cout << " === Sprite Object Info === " << endl;
 	cout << "Sprite texture: " << texture_name << endl;
@@ -234,13 +234,13 @@ string gr::Sprite_object::get_texture_name() {
 
 void gr::Effect::load_from_file(ifstream& file) {
 	Resource_manager<Shader>* mng = Resource_manager<Shader>::get_instance();
-	obj.load_from_file(file); // Просто загружаем спрайт на основе которого строится эффект
+	obj.load_from_file(file); // РџСЂРѕСЃС‚Рѕ Р·Р°РіСЂСѓР¶Р°РµРј СЃРїСЂР°Р№С‚ РЅР° РѕСЃРЅРѕРІРµ РєРѕС‚РѕСЂРѕРіРѕ СЃС‚СЂРѕРёС‚СЃСЏ СЌС„С„РµРєС‚
 
 	bool reading_shader = false;
 	char buff;
 
-	shader_name.clear(); // На всякий случай очистим имя текстуры перед считыванием
-	// Считывем имя текстуры в кавычках
+	shader_name.clear(); // РќР° РІСЃСЏРєРёР№ СЃР»СѓС‡Р°Р№ РѕС‡РёСЃС‚РёРј РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ РїРµСЂРµРґ СЃС‡РёС‚С‹РІР°РЅРёРµРј
+	// РЎС‡РёС‚С‹РІРµРј РёРјСЏ С‚РµРєСЃС‚СѓСЂС‹ РІ РєР°РІС‹С‡РєР°С…
 	while (file >> buff) {
 		if (buff == '"') {
 			if (reading_shader)
@@ -253,13 +253,13 @@ void gr::Effect::load_from_file(ifstream& file) {
 		if (reading_shader)
 			shader_name.push_back(buff);
 	}
-	// Когда считали навзвание текстуры, получаем ссылку на текстуру от менеджера
+	// РљРѕРіРґР° СЃС‡РёС‚Р°Р»Рё РЅР°РІР·РІР°РЅРёРµ С‚РµРєСЃС‚СѓСЂС‹, РїРѕР»СѓС‡Р°РµРј СЃСЃС‹Р»РєСѓ РЅР° С‚РµРєСЃС‚СѓСЂСѓ РѕС‚ РјРµРЅРµРґР¶РµСЂР°
 	shader_name = relative(shader_name).string();
-	shader = mng->get_object(shader_name); // Получаем указатель на шейдер
+	shader = mng->get_object(shader_name); // РџРѕР»СѓС‡Р°РµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С€РµР№РґРµСЂ
 
-	short attrs; // Получаем количество аттрибутов
+	short attrs; // РџРѕР»СѓС‡Р°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ Р°С‚С‚СЂРёР±СѓС‚РѕРІ
 	file >> attrs;
-	for (short i = 0; i < attrs; i++) { // И считываем пары из названия переменной и значения
+	for (short i = 0; i < attrs; i++) { // Р СЃС‡РёС‚С‹РІР°РµРј РїР°СЂС‹ РёР· РЅР°Р·РІР°РЅРёСЏ РїРµСЂРµРјРµРЅРЅРѕР№ Рё Р·РЅР°С‡РµРЅРёСЏ
 		string s_temp;
 		float f_temp;
 		file >> s_temp >> f_temp;
@@ -267,9 +267,9 @@ void gr::Effect::load_from_file(ifstream& file) {
 	}
 }
 
-// Создание спрайта эффекта на основе текстуры на которую эффект будет накладываться
+// РЎРѕР·РґР°РЅРёРµ СЃРїСЂР°Р№С‚Р° СЌС„С„РµРєС‚Р° РЅР° РѕСЃРЅРѕРІРµ С‚РµРєСЃС‚СѓСЂС‹ РЅР° РєРѕС‚РѕСЂСѓСЋ СЌС„С„РµРєС‚ Р±СѓРґРµС‚ РЅР°РєР»Р°РґС‹РІР°С‚СЊСЃСЏ
 void gr::Effect::draw(RenderTexture* texture, Camera cam) {
-	IntRect rect; // Везде нужно округление, иначе текстура жестко дрожит
+	IntRect rect; // Р’РµР·РґРµ РЅСѓР¶РЅРѕ РѕРєСЂСѓРіР»РµРЅРёРµ, РёРЅР°С‡Рµ С‚РµРєСЃС‚СѓСЂР° Р¶РµСЃС‚РєРѕ РґСЂРѕР¶РёС‚
 	rect.top = round(obj.get_sprite()->getGlobalBounds().top);
 	rect.left = round(obj.get_sprite()->getGlobalBounds().left);
 	rect.width = round(obj.get_sprite()->getGlobalBounds().width);
@@ -287,12 +287,12 @@ void gr::Effect::draw(RenderTexture* texture, Camera cam) {
 	shader->setUniform("effect_texture_pos", Vector2f(float(rect.left) / cam.resolution.x, 1.f - float(rect.top + rect.height) / cam.resolution.y));
 	shader->setUniform("effect_texture_size", Vector2f(float(rect.width) / cam.resolution.x, float(rect.height) / cam.resolution.y));
 
-	for (short i = 0; i < shader_attrs.size(); i++) { // Перекидываем все uniform в шейдеры
+	for (short i = 0; i < shader_attrs.size(); i++) { // РџРµСЂРµРєРёРґС‹РІР°РµРј РІСЃРµ uniform РІ С€РµР№РґРµСЂС‹
 		shader->setUniform(shader_attrs[i].first, shader_attrs[i].second);
 	}
 
-	// Шейдер проходит по пикселям diffuse текстуры, на которые накладывается эффект, а спрайт эффекта передается как аргумент
-	// Но вообще их размеры пропорциональны друг другу и для обоих можно использовать gl_TexCoord[0]
+	// РЁРµР№РґРµСЂ РїСЂРѕС…РѕРґРёС‚ РїРѕ РїРёРєСЃРµР»СЏРј diffuse С‚РµРєСЃС‚СѓСЂС‹, РЅР° РєРѕС‚РѕСЂС‹Рµ РЅР°РєР»Р°РґС‹РІР°РµС‚СЃСЏ СЌС„С„РµРєС‚, Р° СЃРїСЂР°Р№С‚ СЌС„С„РµРєС‚Р° РїРµСЂРµРґР°РµС‚СЃСЏ РєР°Рє Р°СЂРіСѓРјРµРЅС‚
+	// РќРѕ РІРѕРѕР±С‰Рµ РёС… СЂР°Р·РјРµСЂС‹ РїСЂРѕРїРѕСЂС†РёРѕРЅР°Р»СЊРЅС‹ РґСЂСѓРі РґСЂСѓРіСѓ Рё РґР»СЏ РѕР±РѕРёС… РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ gl_TexCoord[0]
 	effect_temp->draw(s_effect_temp, shader);
 	effect_temp->display();
 	s_effect_temp.setTexture(effect_temp->getTexture());
@@ -310,7 +310,7 @@ void gr::Light_source::var_update(Camera& cam) {
 	if (rect.contains(world_pos))
 		visible = true;
 	else {
-		visible = false; // ПРОТЕСТИРОВАТЬ ПРОВЕРКУ
+		visible = false; // РџР РћРўР•РЎРўРР РћР’РђРўР¬ РџР РћР’Р•Р РљРЈ
 		return;
 	}
 
@@ -331,8 +331,8 @@ Vector3f gr::Light_source::animation_update() {
 	}
 	Time time = animation_clock.getElapsedTime() % full_animation_time;
 
-	unsigned short curr = 0; // Ищем текущий кадр анимации цвета
-	for (unsigned short i = 0; i < colors.size(); i++) { // Здесь можно поставить бин поиск для небольшого выигрыша в производительности
+	unsigned short curr = 0; // РС‰РµРј С‚РµРєСѓС‰РёР№ РєР°РґСЂ Р°РЅРёРјР°С†РёРё С†РІРµС‚Р°
+	for (unsigned short i = 0; i < colors.size(); i++) { // Р—РґРµСЃСЊ РјРѕР¶РЅРѕ РїРѕСЃС‚Р°РІРёС‚СЊ Р±РёРЅ РїРѕРёСЃРє РґР»СЏ РЅРµР±РѕР»СЊС€РѕРіРѕ РІС‹РёРіСЂС‹С€Р° РІ РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЊРЅРѕСЃС‚Рё
 		if (time < colors[i].second) {
 			curr = i;
 			break;
@@ -341,7 +341,7 @@ Vector3f gr::Light_source::animation_update() {
 
 	if (!smooth_brightness_change)
 		current_color = colors[curr].first;
-	else { // Если цвет меняется плавно, то считаем текущий свет
+	else { // Р•СЃР»Рё С†РІРµС‚ РјРµРЅСЏРµС‚СЃСЏ РїР»Р°РІРЅРѕ, С‚Рѕ СЃС‡РёС‚Р°РµРј С‚РµРєСѓС‰РёР№ СЃРІРµС‚
 		if (curr > 0) {
 			unsigned short prev = curr - 1;
 			current_color = colors[prev].first + (colors[curr].first - colors[prev].first) * ((time - colors[prev].second) / (colors[curr].second - colors[prev].second));
@@ -379,13 +379,13 @@ void gr::Light_source::print_info() {
 	cout << "Animation consists of " << colors.size() << " colors, total animation time: " << full_animation_time.asMilliseconds() << endl;
 }
 
-void gr::Graphics_engine::delete_sprite_object(vector<gr::Sprite_object*>::iterator index) { // Функция для быстрого удаления указателя из вектора спрайтов-обьектов
+void gr::Graphics_engine::delete_sprite_object(vector<gr::Sprite_object*>::iterator index) { // Р¤СѓРЅРєС†РёСЏ РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ СѓРґР°Р»РµРЅРёСЏ СѓРєР°Р·Р°С‚РµР»СЏ РёР· РІРµРєС‚РѕСЂР° СЃРїСЂР°Р№С‚РѕРІ-РѕР±СЊРµРєС‚РѕРІ
 	if (index >= sprite_objects.end() || index < sprite_objects.begin()) {
 		console->log("Trying to delete a non-existent pointer on sprite-object in graphics engine", ConsoleMessageType::WARN);
 		return;
 	}
-	(*index) = (*(sprite_objects.end() - 1)); // быстро меняем удаляемый указатель на указатель из конца списка
-	sprite_objects.pop_back(); // а теперь тоже
+	(*index) = (*(sprite_objects.end() - 1)); // Р±С‹СЃС‚СЂРѕ РјРµРЅСЏРµРј СѓРґР°Р»СЏРµРјС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СѓРєР°Р·Р°С‚РµР»СЊ РёР· РєРѕРЅС†Р° СЃРїРёСЃРєР°
+	sprite_objects.pop_back(); // Р° С‚РµРїРµСЂСЊ С‚РѕР¶Рµ
 }
 
 gr::Graphics_engine::Graphics_engine(RenderWindow& _window, ifstream& file) {
@@ -402,7 +402,7 @@ gr::Graphics_engine::Graphics_engine(RenderWindow& _window, ifstream& file) {
 	glTextureBarrier = sogl_loadOpenGLFunction("glTextureBarrier");
 	sogl_cleanup();
 
-	//file >> render_resolution.x >> render_resolution.y >> output_resolution.x >> output_resolution.y; // Грузим разрешение рендера и отрисовки
+	//file >> render_resolution.x >> render_resolution.y >> output_resolution.x >> output_resolution.y; // Р“СЂСѓР·РёРј СЂР°Р·СЂРµС€РµРЅРёРµ СЂРµРЅРґРµСЂР° Рё РѕС‚СЂРёСЃРѕРІРєРё
 	//main_camera.resolution = render_resolution;
 
 	// !!!!! FULLSCREEN DEFAULT !!!!!
@@ -410,12 +410,12 @@ gr::Graphics_engine::Graphics_engine(RenderWindow& _window, ifstream& file) {
 	output_resolution = render_resolution;
 	main_camera.resolution = render_resolution;
 
-	// Выделяем память для массивов, которые будут отправлять данные об освещении в шейдеры
+	// Р’С‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РґР»СЏ РјР°СЃСЃРёРІРѕРІ, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ РѕС‚РїСЂР°РІР»СЏС‚СЊ РґР°РЅРЅС‹Рµ РѕР± РѕСЃРІРµС‰РµРЅРёРё РІ С€РµР№РґРµСЂС‹
 	light_positions = new Glsl::Vec4[MAX_LIGHT_COUNT];
 	light_directions = new Glsl::Vec2[MAX_LIGHT_COUNT];
 	light_colors = new Glsl::Vec3[MAX_LIGHT_COUNT];
 
-	// Загружаем шейдеры
+	// Р—Р°РіСЂСѓР¶Р°РµРј С€РµР№РґРµСЂС‹
 	if (light_map_shader.loadFromFile("resources/shaders/light_map_shader.txt", Shader::Fragment) &&
 		light_render_shader.loadFromFile("resources/shaders/light_render_shader.txt", Shader::Fragment) &&
 		combine_shader.loadFromFile("resources/shaders/combine_shader.txt", Shader::Fragment) &&
@@ -430,7 +430,7 @@ gr::Graphics_engine::Graphics_engine(RenderWindow& _window, ifstream& file) {
 
 	}
 
-	// Создаем рендер-текстуры нужного размера 
+	// РЎРѕР·РґР°РµРј СЂРµРЅРґРµСЂ-С‚РµРєСЃС‚СѓСЂС‹ РЅСѓР¶РЅРѕРіРѕ СЂР°Р·РјРµСЂР° 
 	if (diffuse_result.create(render_resolution.x, render_resolution.y) &&
 		height_result.create(render_resolution.x, render_resolution.y) &&
 		light_result.create(render_resolution.x, render_resolution.y) &&
@@ -446,7 +446,7 @@ gr::Graphics_engine::Graphics_engine(RenderWindow& _window, ifstream& file) {
 		console->log("Error while creating render textures!", ConsoleMessageType::ERR);
 	}
 
-	combine_shader.setUniform("diffuse_result", weather_result.getTexture()); // Устанавливем кучу параметров в шейдеры
+	combine_shader.setUniform("diffuse_result", weather_result.getTexture()); // РЈСЃС‚Р°РЅР°РІР»РёРІРµРј РєСѓС‡Сѓ РїР°СЂР°РјРµС‚СЂРѕРІ РІ С€РµР№РґРµСЂС‹
 	combine_shader.setUniform("light_result", light_result.getTexture());
 	posteffect_shader.setUniform("texture", Shader::CurrentTexture);
 	posteffect_shader.setUniform("texture_size", Vector2f(render_resolution));
@@ -467,18 +467,18 @@ gr::Graphics_engine::Graphics_engine(RenderWindow& _window, ifstream& file) {
 }
 
 void gr::Graphics_engine::create_draw_order() {
-	// Сначала очищаем очередь
+	// РЎРЅР°С‡Р°Р»Р° РѕС‡РёС‰Р°РµРј РѕС‡РµСЂРµРґСЊ
 	sprite_draw_order.clear();
 
-	// Ищем спрайты, попадающие в область видимости и добавляем в очередь
+	// РС‰РµРј СЃРїСЂР°Р№С‚С‹, РїРѕРїР°РґР°СЋС‰РёРµ РІ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё Рё РґРѕР±Р°РІР»СЏРµРј РІ РѕС‡РµСЂРµРґСЊ
 	for (int obj_num = 0; obj_num < sprite_objects.size(); obj_num++) {
 
-		// Код для удаления спрайта
+		// РљРѕРґ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ СЃРїСЂР°Р№С‚Р°
 		bool obj_deleted = false;
-		for (int i = 0; i < int(sprite_objects_for_deletion.size()); i++) { // проверяем некоторое количество элементов из списка для удаления
-			if (sprite_objects[obj_num] == sprite_objects_for_deletion[i]) { // если отрисовываемый обьект 
+		for (int i = 0; i < int(sprite_objects_for_deletion.size()); i++) { // РїСЂРѕРІРµСЂСЏРµРј РЅРµРєРѕС‚РѕСЂРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РёР· СЃРїРёСЃРєР° РґР»СЏ СѓРґР°Р»РµРЅРёСЏ
+			if (sprite_objects[obj_num] == sprite_objects_for_deletion[i]) { // РµСЃР»Рё РѕС‚СЂРёСЃРѕРІС‹РІР°РµРјС‹Р№ РѕР±СЊРµРєС‚ 
 				delete_sprite_object(sprite_objects.begin() + obj_num);
-				sprite_objects_for_deletion.erase(sprite_objects_for_deletion.begin() + i); // тут можно просто стереть т.к. список не предполагается особо большим
+				sprite_objects_for_deletion.erase(sprite_objects_for_deletion.begin() + i); // С‚СѓС‚ РјРѕР¶РЅРѕ РїСЂРѕСЃС‚Рѕ СЃС‚РµСЂРµС‚СЊ С‚.Рє. СЃРїРёСЃРѕРє РЅРµ РїСЂРµРґРїРѕР»Р°РіР°РµС‚СЃСЏ РѕСЃРѕР±Рѕ Р±РѕР»СЊС€РёРј
 				obj_deleted = true;
 				break;
 			}
@@ -492,11 +492,11 @@ void gr::Graphics_engine::create_draw_order() {
 			sprite_draw_order.push_back(sprite_objects[obj_num]);
 		}
 	}
-	// Сортируем их по слою отрисовки layer
+	// РЎРѕСЂС‚РёСЂСѓРµРј РёС… РїРѕ СЃР»РѕСЋ РѕС‚СЂРёСЃРѕРІРєРё layer
 	sort(sprite_draw_order.begin(), sprite_draw_order.end(),
 		[](Sprite_object* obj1, Sprite_object* obj2) {return (obj1->get_layer() > obj2->get_layer()); });
 
-	// То-же для эффектов
+	// РўРѕ-Р¶Рµ РґР»СЏ СЌС„С„РµРєС‚РѕРІ
 	effect_draw_order.clear();
 	for (auto obj = effects.begin(); obj < effects.end(); obj++) {
 		if ((*obj)->obj.var_update(main_camera)) {
@@ -506,7 +506,7 @@ void gr::Graphics_engine::create_draw_order() {
 	sort(effect_draw_order.begin(), effect_draw_order.end(),
 		[](Effect* obj1, Effect* obj2) {return (obj1->obj.get_layer() > obj2->obj.get_layer()); });
 
-	// Аналогичные действия делаем для спрайтов с картами высот, но уже можно не сортировать
+	// РђРЅР°Р»РѕРіРёС‡РЅС‹Рµ РґРµР№СЃС‚РІРёСЏ РґРµР»Р°РµРј РґР»СЏ СЃРїСЂР°Р№С‚РѕРІ СЃ РєР°СЂС‚Р°РјРё РІС‹СЃРѕС‚, РЅРѕ СѓР¶Рµ РјРѕР¶РЅРѕ РЅРµ СЃРѕСЂС‚РёСЂРѕРІР°С‚СЊ
 	height_draw_order.clear();
 	for (int obj_num = 0; obj_num < height_objects.size(); obj_num++) {
 		if (height_objects[obj_num]->var_update(main_camera) && height_objects[obj_num]->active) {
@@ -516,7 +516,7 @@ void gr::Graphics_engine::create_draw_order() {
 }
 
 void gr::Graphics_engine::update_lights() {
-	// Обновляем массивы с информацией об источниках
+	// РћР±РЅРѕРІР»СЏРµРј РјР°СЃСЃРёРІС‹ СЃ РёРЅС„РѕСЂРјР°С†РёРµР№ РѕР± РёСЃС‚РѕС‡РЅРёРєР°С…
 	int light_counter = 0;
 	for (auto obj = lights.begin(); obj < lights.end(); obj++) {
 		(*obj)->var_update(main_camera);
@@ -537,7 +537,7 @@ void gr::Graphics_engine::update_lights() {
 			light_counter += 1;
 		}
 	}
-	// И закидываем все в шейдеры
+	// Р Р·Р°РєРёРґС‹РІР°РµРј РІСЃРµ РІ С€РµР№РґРµСЂС‹
 	light_map_shader.setUniform("light_count", light_counter);
 	light_map_shader.setUniformArray("light_positions", light_positions, light_counter);
 	light_map_shader.setUniformArray("light_directions", light_directions, light_counter);
@@ -559,11 +559,11 @@ void gr::Graphics_engine::set_weather_uniform() {
 	shader_wind_dist += (clock.getElapsedTime() - wind_last_time).asSeconds() * Vector2f(wind_speed.x, -wind_speed.y);
 	weather_shader.setUniform("world_pos", Vector2f(main_camera.world_pos));
 	weather_shader.setUniform("world_size", Vector2f(main_camera.world_size));
-	weather_shader.setUniform("wind_speed", Vector2f(wind_speed.x, -wind_speed.y)); // Минус для перевода в координаты glsl
-	weather_shader.setUniform("fog_height", fog_height); // Высота тумана
-	weather_shader.setUniform("fog_def", fog_def); // Плотность тумана
+	weather_shader.setUniform("wind_speed", Vector2f(wind_speed.x, -wind_speed.y)); // РњРёРЅСѓСЃ РґР»СЏ РїРµСЂРµРІРѕРґР° РІ РєРѕРѕСЂРґРёРЅР°С‚С‹ glsl
+	weather_shader.setUniform("fog_height", fog_height); // Р’С‹СЃРѕС‚Р° С‚СѓРјР°РЅР°
+	weather_shader.setUniform("fog_def", fog_def); // РџР»РѕС‚РЅРѕСЃС‚СЊ С‚СѓРјР°РЅР°
 	weather_shader.setUniform("fog_cloud", fog_cloud);
-	weather_shader.setUniform("rain_strength", rain * 0.0023f); // Интенсивность дождя на подгонный коэффициент
+	weather_shader.setUniform("rain_strength", rain * 0.0023f); // РРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚СЊ РґРѕР¶РґСЏ РЅР° РїРѕРґРіРѕРЅРЅС‹Р№ РєРѕСЌС„С„РёС†РёРµРЅС‚
 	weather_shader.setUniform("wind_dist", shader_wind_dist);
 	wind_last_time = clock.getElapsedTime();
 }
@@ -589,15 +589,15 @@ void gr::Graphics_engine::render() {
 	height_result ----> light_map ----> light_result ----/
 	*/
 
-	// Очищаем текстуры (можно чистить не все)
+	// РћС‡РёС‰Р°РµРј С‚РµРєСЃС‚СѓСЂС‹ (РјРѕР¶РЅРѕ С‡РёСЃС‚РёС‚СЊ РЅРµ РІСЃРµ)
 	diffuse_result.clear(null_color);
 	height_result.clear(null_color);
 
-	// Обновляем камеру и создаем очередь на отрисовку
+	// РћР±РЅРѕРІР»СЏРµРј РєР°РјРµСЂСѓ Рё СЃРѕР·РґР°РµРј РѕС‡РµСЂРµРґСЊ РЅР° РѕС‚СЂРёСЃРѕРІРєСѓ
 	main_camera.update();
 	create_draw_order();
 
-	// Отрисовывем спрайты по порядку в обычную diffuse текстуру и карту высот
+	// РћС‚СЂРёСЃРѕРІС‹РІРµРј СЃРїСЂР°Р№С‚С‹ РїРѕ РїРѕСЂСЏРґРєСѓ РІ РѕР±С‹С‡РЅСѓСЋ diffuse С‚РµРєСЃС‚СѓСЂСѓ Рё РєР°СЂС‚Сѓ РІС‹СЃРѕС‚
 	auto eff = effect_draw_order.begin();
 	for (auto obj = sprite_draw_order.begin(); obj < sprite_draw_order.end(); obj++) {
 
@@ -625,40 +625,40 @@ void gr::Graphics_engine::render() {
 	}
 	diffuse_result.display();
 	height_result.display();
-	// На данном этапе у нас готовы две главные текстуры которые далее с помощью шейдеров будут приводится к нормальному виду
+	// РќР° РґР°РЅРЅРѕРј СЌС‚Р°РїРµ Сѓ РЅР°СЃ РіРѕС‚РѕРІС‹ РґРІРµ РіР»Р°РІРЅС‹Рµ С‚РµРєСЃС‚СѓСЂС‹ РєРѕС‚РѕСЂС‹Рµ РґР°Р»РµРµ СЃ РїРѕРјРѕС‰СЊСЋ С€РµР№РґРµСЂРѕРІ Р±СѓРґСѓС‚ РїСЂРёРІРѕРґРёС‚СЃСЏ Рє РЅРѕСЂРјР°Р»СЊРЅРѕРјСѓ РІРёРґСѓ
 
 	update_lights();
 
-	// Создаем карту освещения
+	// РЎРѕР·РґР°РµРј РєР°СЂС‚Сѓ РѕСЃРІРµС‰РµРЅРёСЏ
 	light_map.draw(Sprite(light_map.getTexture()), &light_map_shader);
 
-	// Рисуем все тени в отдельную текстуру
+	// Р РёСЃСѓРµРј РІСЃРµ С‚РµРЅРё РІ РѕС‚РґРµР»СЊРЅСѓСЋ С‚РµРєСЃС‚СѓСЂСѓ
 	light_result.draw(Sprite(light_result.getTexture()), &light_render_shader);
 	light_result.display();
 
-	// Обновляем информацию в шейдере погоды и постэффектов, это можно делать не каждый кадр, а чуть реже ради производительностиэ
+	// РћР±РЅРѕРІР»СЏРµРј РёРЅС„РѕСЂРјР°С†РёСЋ РІ С€РµР№РґРµСЂРµ РїРѕРіРѕРґС‹ Рё РїРѕСЃС‚СЌС„С„РµРєС‚РѕРІ, СЌС‚Рѕ РјРѕР¶РЅРѕ РґРµР»Р°С‚СЊ РЅРµ РєР°Р¶РґС‹Р№ РєР°РґСЂ, Р° С‡СѓС‚СЊ СЂРµР¶Рµ СЂР°РґРё РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЊРЅРѕСЃС‚РёСЌ
 	if (frame_counter % shader_update_freq == 0) {
 		set_posteffect_uniform();
 	}
 	set_weather_uniform();
 
-	// На diffuse_result добавляем погоду и получаем weather_result
+	// РќР° diffuse_result РґРѕР±Р°РІР»СЏРµРј РїРѕРіРѕРґСѓ Рё РїРѕР»СѓС‡Р°РµРј weather_result
 	weather_shader.setUniform("u_time", clock.getElapsedTime().asSeconds());
 	weather_result.draw(Sprite(diffuse_result.getTexture()), &weather_shader);
 
-	// Закидываем weather_result в шейдре и складываем обычную цветастую картинку с тенями вместе
+	// Р—Р°РєРёРґС‹РІР°РµРј weather_result РІ С€РµР№РґСЂРµ Рё СЃРєР»Р°РґС‹РІР°РµРј РѕР±С‹С‡РЅСѓСЋ С†РІРµС‚Р°СЃС‚СѓСЋ РєР°СЂС‚РёРЅРєСѓ СЃ С‚РµРЅСЏРјРё РІРјРµСЃС‚Рµ
 	combined_result.draw(Sprite(weather_result.getTexture()), &combine_shader);
 
-	// Добавляем постэффекты к картинке
+	// Р”РѕР±Р°РІР»СЏРµРј РїРѕСЃС‚СЌС„С„РµРєС‚С‹ Рє РєР°СЂС‚РёРЅРєРµ
 	posteffect_shader.setUniform("time", clock.getElapsedTime().asSeconds());
 	posteffect_result.draw(Sprite(combined_result.getTexture()), &posteffect_shader);
 	posteffect_result.display();
 
-	// Выводим итоговый спрайт на окно
+	// Р’С‹РІРѕРґРёРј РёС‚РѕРіРѕРІС‹Р№ СЃРїСЂР°Р№С‚ РЅР° РѕРєРЅРѕ
 	window->draw(output_sprite);
 	frame_counter++;
 
-	// Анализ производительности (он сам жрет производительности)
+	// РђРЅР°Р»РёР· РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЊРЅРѕСЃС‚Рё (РѕРЅ СЃР°Рј Р¶СЂРµС‚ РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЊРЅРѕСЃС‚Рё)
 	if (frame_time.size() == frame_num_for_anylysis) {
 		sort(frame_time.begin(), frame_time.end());
 		fps = float(frame_num_for_anylysis) / sum_time;

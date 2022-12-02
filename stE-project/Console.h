@@ -1,13 +1,13 @@
-#pragma once
+п»ї#pragma once
 
 #include "Common.h"
 
 enum class ConsoleMessageType {
-	DEF, // По умолчанию
-	INFO, // Просто информация
-	WARN, // Предупреждение
-	ERR, // Ошибка
-	SUCC, // Сообщение об успехе
+	DEF, // РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+	INFO, // РџСЂРѕСЃС‚Рѕ РёРЅС„РѕСЂРјР°С†РёСЏ
+	WARN, // РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ
+	ERR, // РћС€РёР±РєР°
+	SUCC, // РЎРѕРѕР±С‰РµРЅРёРµ РѕР± СѓСЃРїРµС…Рµ
 };
 
 class Console {
@@ -33,7 +33,7 @@ private:
 
 public:
 	Font font;
-	deque<pair<string, ConsoleMessageType>> messages; // Массив со всеми сообщениями в консоли
+	deque<pair<string, ConsoleMessageType>> messages; // РњР°СЃСЃРёРІ СЃРѕ РІСЃРµРјРё СЃРѕРѕР±С‰РµРЅРёСЏРјРё РІ РєРѕРЅСЃРѕР»Рё
 	Sprite sprite;
 
 	static Console* get_instance() {
@@ -41,7 +41,7 @@ public:
 		return &instance;
 	}
 
-	void log(string msg, ConsoleMessageType type = ConsoleMessageType::DEF); // Отправить сообщение в консоль
+	void log(string msg, ConsoleMessageType type = ConsoleMessageType::DEF); // РћС‚РїСЂР°РІРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ РІ РєРѕРЅСЃРѕР»СЊ
 
 	void render();
 };

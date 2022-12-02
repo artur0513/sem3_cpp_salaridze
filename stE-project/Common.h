@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -21,10 +21,10 @@ namespace sf {
 	using DoubleRect = Rect<double>;
 }
 
-// Строка с текущей датой
+// РЎС‚СЂРѕРєР° СЃ С‚РµРєСѓС‰РµР№ РґР°С‚РѕР№
 string get_date_string();
 
-// Строка с текущим временем
+// РЎС‚СЂРѕРєР° СЃ С‚РµРєСѓС‰РёРј РІСЂРµРјРµРЅРµРј
 string get_time_string();
 
 template<class T>
@@ -61,9 +61,9 @@ T smoothstep(T edge0, T edge1, T x)
 
 class Game_time {
 private:
-	float time_ratio = 6.f; // Во сколько раз игровое время быстрее реального
-	Clock clock; // Часы реального времени
-	bool last_tick_running = true; // Шло ли время при предыдущем вызове update
+	float time_ratio = 6.f; // Р’Рѕ СЃРєРѕР»СЊРєРѕ СЂР°Р· РёРіСЂРѕРІРѕРµ РІСЂРµРјСЏ Р±С‹СЃС‚СЂРµРµ СЂРµР°Р»СЊРЅРѕРіРѕ
+	Clock clock; // Р§Р°СЃС‹ СЂРµР°Р»СЊРЅРѕРіРѕ РІСЂРµРјРµРЅРё
+	bool last_tick_running = true; // РЁР»Рѕ Р»Рё РІСЂРµРјСЏ РїСЂРё РїСЂРµРґС‹РґСѓС‰РµРј РІС‹Р·РѕРІРµ update
 
 	int months[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	string short_months[12] = { "Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec" };
@@ -73,11 +73,11 @@ private:
 public:
 	int year, month, day, hour, minute = 0, second = 0;
 
-	int total_seconds = 0; // сколько секунд прошло с начал игры
-	double total_hours = 0.0; // сколько часов прошло с начала игры 
-	double day_hours = 0.0; // сколько часов прошло с начала суток
+	int total_seconds = 0; // СЃРєРѕР»СЊРєРѕ СЃРµРєСѓРЅРґ РїСЂРѕС€Р»Рѕ СЃ РЅР°С‡Р°Р» РёРіСЂС‹
+	double total_hours = 0.0; // СЃРєРѕР»СЊРєРѕ С‡Р°СЃРѕРІ РїСЂРѕС€Р»Рѕ СЃ РЅР°С‡Р°Р»Р° РёРіСЂС‹ 
+	double day_hours = 0.0; // СЃРєРѕР»СЊРєРѕ С‡Р°СЃРѕРІ РїСЂРѕС€Р»Рѕ СЃ РЅР°С‡Р°Р»Р° СЃСѓС‚РѕРє
 
-	bool running = true; // Идет ли время, или пауза
+	bool running = true; // РРґРµС‚ Р»Рё РІСЂРµРјСЏ, РёР»Рё РїР°СѓР·Р°
 
 	Game_time(int start_year, int start_month, int start_day, int start_hour);
 
