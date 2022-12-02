@@ -12,5 +12,5 @@ include_directories(${CMAKE_SOURCE_DIR}/SFML_dir/include)
 include_directories(./src)
 include_directories(./src/headers)
 
-target_link_libraries(stE-project sfml-graphics sfml-system sfml-main)
+target_link_libraries(stE-project sfml-graphics sfml-system sfml-main sfml-audio sfml-network)
 target_compile_features(stE-project PUBLIC cxx_std_20)
