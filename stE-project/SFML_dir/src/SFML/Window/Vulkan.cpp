@@ -29,21 +29,22 @@
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    #include <SFML/Window/Win32/VulkanImplWin32.hpp>
-    typedef sf::priv::VulkanImplWin32 VulkanImplType;
+#include <SFML/Window/Win32/VulkanImplWin32.hpp>
+using VulkanImplType = sf::priv::VulkanImplWin32;
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD)
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
+    defined(SFML_SYSTEM_NETBSD)
 
-    #if defined(SFML_USE_DRM)
+#if defined(SFML_USE_DRM)
 
-        #define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
+#define SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE
 
-    #else
+#else
 
-        #include <SFML/Window/Unix/VulkanImplX11.hpp>
-        typedef sf::priv::VulkanImplX11 VulkanImplType;
+#include <SFML/Window/Unix/VulkanImplX11.hpp>
+using VulkanImplType = sf::priv::VulkanImplX11;
 
-    #endif
+#endif
 
 #else
 
@@ -55,11 +56,10 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-bool Vulkan::isAvailable(bool requireGraphics)
+bool Vulkan::isAvailable([[maybe_unused]] bool requireGraphics)
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
-    (void) requireGraphics;
     return false;
 
 #else
@@ -71,12 +71,11 @@ bool Vulkan::isAvailable(bool requireGraphics)
 
 
 ////////////////////////////////////////////////////////////
-VulkanFunctionPointer Vulkan::getFunction(const char* name)
+VulkanFunctionPointer Vulkan::getFunction([[maybe_unused]] const char* name)
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
-    (void) name;
-    return NULL;
+    return nullptr;
 
 #else
 

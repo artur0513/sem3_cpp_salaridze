@@ -27,23 +27,28 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include "ResourcePath.hpp"
+
 #import <Foundation/Foundation.h>
+#include <filesystem>
 
 ////////////////////////////////////////////////////////////
-std::string resourcePath(void)
+std::filesystem::path resourcePath()
 {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
-    std::string rpath;
-    NSBundle* bundle = [NSBundle mainBundle];
+    std::filesystem::path rpath;
+    NSBundle*             bundle = [NSBundle mainBundle];
 
-    if (bundle == nil) {
+    if (bundle == nil)
+    {
 #ifdef DEBUG
         NSLog(@"bundle is nil... thus no resources path can be found.");
 #endif
-    } else {
+    }
+    else
+    {
         NSString* path = [bundle resourcePath];
-        rpath = [path UTF8String] + std::string("/");
+        rpath          = [path UTF8String] + std::string("/");
     }
 
     [pool drain];

@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/GLExtensions.hpp>
-#include <SFML/Window/Context.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/Window/Context.hpp>
 
 // We check for this definition in order to avoid multiple definitions of GLAD
 // entities during unity builds of SFML.
@@ -37,12 +37,14 @@
 #include <glad/gl.h>
 #endif
 
+#include <ostream>
+
 #if !defined(GL_MAJOR_VERSION)
-    #define GL_MAJOR_VERSION 0x821B
+#define GL_MAJOR_VERSION 0x821B
 #endif
 
 #if !defined(GL_MINOR_VERSION)
-    #define GL_MINOR_VERSION 0x821C
+#define GL_MINOR_VERSION 0x821C
 #endif
 
 
@@ -92,8 +94,8 @@ void ensureExtensionsInit()
 
         if ((majorVersion < 1) || ((majorVersion == 1) && (minorVersion < 1)))
         {
-            err() << "sfml-graphics requires support for OpenGL 1.1 or greater" << std::endl;
-            err() << "Ensure that hardware acceleration is enabled if available" << std::endl;
+            err() << "sfml-graphics requires support for OpenGL 1.1 or greater" << '\n'
+                  << "Ensure that hardware acceleration is enabled if available" << std::endl;
         }
     }
 }

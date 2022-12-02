@@ -406,7 +406,7 @@ gr::Graphics_engine::Graphics_engine(RenderWindow& _window, ifstream& file) {
 	//main_camera.resolution = render_resolution;
 
 	// !!!!! FULLSCREEN DEFAULT !!!!!
-	render_resolution = Vector2u(VideoMode::getDesktopMode().width, VideoMode::getDesktopMode().height);
+	render_resolution = VideoMode::getDesktopMode().size;
 	output_resolution = render_resolution;
 	main_camera.resolution = render_resolution;
 
@@ -431,14 +431,14 @@ gr::Graphics_engine::Graphics_engine(RenderWindow& _window, ifstream& file) {
 	}
 
 	// Создаем рендер-текстуры нужного размера 
-	if (diffuse_result.create(render_resolution.x, render_resolution.y) &&
-		height_result.create(render_resolution.x, render_resolution.y) &&
-		light_result.create(render_resolution.x, render_resolution.y) &&
-		combined_result.create(render_resolution.x, render_resolution.y) &&
-		posteffect_result.create(render_resolution.x, render_resolution.y) &&
-		weather_result.create(render_resolution.x, render_resolution.y) &&
-		effect_temp.create(render_resolution.x, render_resolution.y) &&
-		light_map.create(768, 256))
+	if (diffuse_result.create(Vector2u(render_resolution.x, render_resolution.y)) &&
+		height_result.create(Vector2u(render_resolution.x, render_resolution.y)) &&
+		light_result.create(Vector2u(render_resolution.x, render_resolution.y)) &&
+		combined_result.create(Vector2u(render_resolution.x, render_resolution.y)) &&
+		posteffect_result.create(Vector2u(render_resolution.x, render_resolution.y)) &&
+		weather_result.create(Vector2u(render_resolution.x, render_resolution.y)) &&
+		effect_temp.create(Vector2u(render_resolution.x, render_resolution.y)) &&
+		light_map.create(Vector2u(768, 256)))
 	{
 		console->log("Render textures creating successful!", ConsoleMessageType::SUCC);
 	}

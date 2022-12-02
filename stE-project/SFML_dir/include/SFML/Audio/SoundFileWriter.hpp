@@ -29,6 +29,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+
+#include <filesystem>
 #include <string>
 
 
@@ -41,12 +43,13 @@ namespace sf
 class SFML_AUDIO_API SoundFileWriter
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~SoundFileWriter() {}
+    virtual ~SoundFileWriter()
+    {
+    }
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file for writing
@@ -58,7 +61,9 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount) = 0;
+    [[nodiscard]] virtual bool open(const std::filesystem::path& filename,
+                                    unsigned int                 sampleRate,
+                                    unsigned int                 channelCount) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the open file
@@ -67,7 +72,7 @@ public:
     /// \param count   Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    virtual void write(const Int16* samples, Uint64 count) = 0;
+    virtual void write(const std::int16_t* samples, std::uint64_t count) = 0;
 };
 
 } // namespace sf
@@ -97,20 +102,20 @@ public:
 /// {
 /// public:
 ///
-///     static bool check(const std::string& filename)
+///     [[nodiscard]] static bool check(const std::filesystem::path& filename)
 ///     {
 ///         // typically, check the extension
 ///         // return true if the writer can handle the format
 ///     }
 ///
-///     virtual bool open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount)
+///     [[nodiscard]] bool open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount) override
 ///     {
 ///         // open the file 'filename' for writing,
 ///         // write the given sample rate and channel count to the file header
 ///         // return true on success
 ///     }
 ///
-///     virtual void write(const sf::Int16* samples, sf::Uint64 count)
+///     void write(const std::int16_t* samples, std::uint64_t count) override
 ///     {
 ///         // write 'count' samples stored at address 'samples',
 ///         // convert them (for example to normalized float) if the format requires it

@@ -26,40 +26,42 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
-#include <SFML/System/Mutex.hpp>
-#include <SFML/System/Lock.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+
 #include <X11/keysym.h>
+
 #include <cassert>
 #include <cstdlib>
-#include <map>
+#include <mutex>
+#include <ostream>
+#include <unordered_map>
 
 
 namespace
 {
-    // The shared display and its reference counter
-    Display* sharedDisplay = NULL;
-    unsigned int referenceCount = 0;
-    XIM sharedXIM = NULL;
-    unsigned int referenceCountXIM = 0;
-    sf::Mutex mutex;
+// The shared display and its reference counter
+Display*             sharedDisplay     = nullptr;
+unsigned int         referenceCount    = 0;
+XIM                  sharedXIM         = nullptr;
+unsigned int         referenceCountXIM = 0;
+std::recursive_mutex mutex;
 
-    typedef std::map<std::string, Atom> AtomMap;
-    AtomMap atoms;
-}
+using AtomMap = std::unordered_map<std::string, Atom>;
+AtomMap atoms;
+} // namespace
 
 namespace sf
 {
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-Display* OpenDisplay()
+Display* openDisplay()
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     if (referenceCount == 0)
     {
-        sharedDisplay = XOpenDisplay(NULL);
+        sharedDisplay = XOpenDisplay(nullptr);
 
         // Opening display failed: The best we can do at the moment is to output a meaningful error message
         // and cause an abnormal program termination
@@ -70,29 +72,29 @@ Display* OpenDisplay()
         }
     }
 
-    referenceCount++;
+    ++referenceCount;
     return sharedDisplay;
 }
 
 
 ////////////////////////////////////////////////////////////
-void CloseDisplay(Display* display)
+void closeDisplay(Display* display)
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     assert(display == sharedDisplay);
 
-    referenceCount--;
+    --referenceCount;
     if (referenceCount == 0)
         XCloseDisplay(display);
 }
 
 ////////////////////////////////////////////////////////////
-XIM OpenXIM()
+XIM openXim()
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
-    assert(sharedDisplay != NULL);
+    assert(sharedDisplay != nullptr);
 
     if (referenceCountXIM == 0)
     {
@@ -102,15 +104,15 @@ XIM OpenXIM()
         // the IM and properly receiving text
         // First save the previous ones (this might be able to be written more elegantly?)
         const char* p;
-        std::string prevLoc((p = setlocale(LC_ALL, NULL)) ? p : "");
-        std::string prevXLoc((p = XSetLocaleModifiers(NULL)) ? p : "");
+        std::string prevLoc((p = setlocale(LC_ALL, nullptr)) ? p : "");
+        std::string prevXLoc((p = XSetLocaleModifiers(nullptr)) ? p : "");
 
         // Set the locales from environment
         setlocale(LC_ALL, "");
         XSetLocaleModifiers("");
 
         // Create the input context
-        sharedXIM = XOpenIM(sharedDisplay, NULL, NULL, NULL);
+        sharedXIM = XOpenIM(sharedDisplay, nullptr, nullptr, nullptr);
 
         // Restore the previous locale
         if (prevLoc.length() != 0)
@@ -120,37 +122,35 @@ XIM OpenXIM()
             XSetLocaleModifiers(prevXLoc.c_str());
     }
 
-    referenceCountXIM++;
+    ++referenceCountXIM;
 
     return sharedXIM;
 }
 
 ////////////////////////////////////////////////////////////
-void CloseXIM(XIM xim)
+void closeXim(XIM xim)
 {
-    Lock lock(mutex);
+    std::scoped_lock lock(mutex);
 
     assert(xim == sharedXIM);
 
-    referenceCountXIM--;
+    --referenceCountXIM;
 
-    if ((referenceCountXIM == 0) && (xim != NULL))
+    if ((referenceCountXIM == 0) && (xim != nullptr))
         XCloseIM(xim);
 }
 
 ////////////////////////////////////////////////////////////
 Atom getAtom(const std::string& name, bool onlyIfExists)
 {
-    AtomMap::const_iterator iter = atoms.find(name);
+    if (auto it = atoms.find(name); it != atoms.end())
+        return it->second;
 
-    if (iter != atoms.end())
-        return iter->second;
-
-    Display* display = OpenDisplay();
+    Display* display = openDisplay();
 
     Atom atom = XInternAtom(display, name.c_str(), onlyIfExists ? True : False);
 
-    CloseDisplay(display);
+    closeDisplay(display);
 
     atoms[name] = atom;
 

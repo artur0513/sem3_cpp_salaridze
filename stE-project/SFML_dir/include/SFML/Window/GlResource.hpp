@@ -29,7 +29,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
-#include <SFML/System/NonCopyable.hpp>
 
 
 namespace sf
@@ -37,7 +36,7 @@ namespace sf
 
 class Context;
 
-typedef void(*ContextDestroyCallback)(void*);
+using ContextDestroyCallback = void (*)(void*);
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for classes that require an OpenGL context
@@ -46,7 +45,6 @@ typedef void(*ContextDestroyCallback)(void*);
 class SFML_WINDOW_API GlResource
 {
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -76,7 +74,7 @@ protected:
     /// \brief RAII helper class to temporarily lock an available context for use
     ///
     ////////////////////////////////////////////////////////////
-    class SFML_WINDOW_API TransientContextLock : NonCopyable
+    class SFML_WINDOW_API TransientContextLock
     {
     public:
         ////////////////////////////////////////////////////////////
@@ -90,6 +88,18 @@ protected:
         ///
         ////////////////////////////////////////////////////////////
         ~TransientContextLock();
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Deleted copy constructor
+        ///
+        ////////////////////////////////////////////////////////////
+        TransientContextLock(const TransientContextLock&) = delete;
+
+        ////////////////////////////////////////////////////////////
+        /// \brief Deleted copy assignment
+        ///
+        ////////////////////////////////////////////////////////////
+        TransientContextLock& operator=(const TransientContextLock&) = delete;
     };
 };
 

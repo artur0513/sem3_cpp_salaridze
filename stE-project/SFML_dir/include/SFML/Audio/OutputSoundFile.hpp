@@ -29,7 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
-#include <SFML/System/NonCopyable.hpp>
+
+#include <filesystem>
+#include <memory>
 #include <string>
 
 
@@ -41,10 +43,9 @@ class SoundFileWriter;
 /// \brief Provide write access to sound files
 ///
 ////////////////////////////////////////////////////////////
-class SFML_AUDIO_API OutputSoundFile : NonCopyable
+class SFML_AUDIO_API OutputSoundFile
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -60,6 +61,18 @@ public:
     ~OutputSoundFile();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    OutputSoundFile(const OutputSoundFile&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    OutputSoundFile& operator=(const OutputSoundFile&) = delete;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open the sound file from the disk for writing
     ///
     /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
@@ -71,7 +84,7 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    bool openFromFile(const std::string& filename, unsigned int sampleRate, unsigned int channelCount);
+    [[nodiscard]] bool openFromFile(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount);
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the file
@@ -80,7 +93,7 @@ public:
     /// \param count       Number of samples to write
     ///
     ////////////////////////////////////////////////////////////
-    void write(const Int16* samples, Uint64 count);
+    void write(const std::int16_t* samples, std::uint64_t count);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the current file
@@ -89,11 +102,10 @@ public:
     void close();
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    SoundFileWriter* m_writer; //!< Writer that handles I/O on the file's format
+    std::unique_ptr<SoundFileWriter> m_writer; //!< Writer that handles I/O on the file's format
 };
 
 } // namespace sf
@@ -121,7 +133,7 @@ private:
 /// while (...)
 /// {
 ///     // Read or generate audio samples from your custom source
-///     std::vector<sf::Int16> samples = ...;
+///     std::vector<std::int16_t> samples = ...;
 ///
 ///     // Write them to the file
 ///     file.write(samples.data(), samples.size());

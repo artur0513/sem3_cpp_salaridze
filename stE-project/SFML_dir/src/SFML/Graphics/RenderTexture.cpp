@@ -26,43 +26,32 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/RenderTextureImplFBO.hpp>
 #include <SFML/Graphics/RenderTextureImplDefault.hpp>
+#include <SFML/Graphics/RenderTextureImplFBO.hpp>
 #include <SFML/System/Err.hpp>
+
+#include <memory>
+#include <ostream>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RenderTexture::RenderTexture() :
-m_impl(NULL)
-{
-
-}
+RenderTexture::RenderTexture() = default;
 
 
 ////////////////////////////////////////////////////////////
-RenderTexture::~RenderTexture()
-{
-    delete m_impl;
-}
+RenderTexture::~RenderTexture() = default;
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTexture::create(unsigned int width, unsigned int height, bool depthBuffer)
-{
-    return create(width, height, ContextSettings(depthBuffer ? 32 : 0));
-}
-
-
-////////////////////////////////////////////////////////////
-bool RenderTexture::create(unsigned int width, unsigned int height, const ContextSettings& settings)
+bool RenderTexture::create(const Vector2u& size, const ContextSettings& settings)
 {
     // Set texture to be in sRGB scale if requested
     m_texture.setSrgb(settings.sRgbCapable);
 
     // Create the texture
-    if (!m_texture.create(width, height))
+    if (!m_texture.create(size))
     {
         err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
         return false;
@@ -72,11 +61,10 @@ bool RenderTexture::create(unsigned int width, unsigned int height, const Contex
     setSmooth(false);
 
     // Create the implementation
-    delete m_impl;
     if (priv::RenderTextureImplFBO::isAvailable())
     {
         // Use frame-buffer object (FBO)
-        m_impl = new priv::RenderTextureImplFBO;
+        m_impl = std::make_unique<priv::RenderTextureImplFBO>();
 
         // Mark the texture as being a framebuffer object attachment
         m_texture.m_fboAttachment = true;
@@ -84,11 +72,11 @@ bool RenderTexture::create(unsigned int width, unsigned int height, const Contex
     else
     {
         // Use default implementation
-        m_impl = new priv::RenderTextureImplDefault;
+        m_impl = std::make_unique<priv::RenderTextureImplDefault>();
     }
 
     // Initialize the render texture
-    if (!m_impl->create(width, height, m_texture.m_texture, settings))
+    if (!m_impl->create(size, m_texture.m_texture, settings))
         return false;
 
     // We can now initialize the render target part
@@ -150,13 +138,11 @@ bool RenderTexture::generateMipmap()
 ////////////////////////////////////////////////////////////
 bool RenderTexture::setActive(bool active)
 {
-    bool result = m_impl && m_impl->activate(active);
-
     // Update RenderTarget tracking
-    if (result)
-        RenderTarget::setActive(active);
+    if (m_impl && m_impl->activate(active))
+        return RenderTarget::setActive(active);
 
-    return result;
+    return false;
 }
 
 

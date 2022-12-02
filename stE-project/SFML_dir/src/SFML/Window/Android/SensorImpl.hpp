@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Vector3.hpp>
+
 #include <android/sensor.h>
 
 
@@ -43,7 +44,6 @@ namespace priv
 class SensorImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Perform the global initialization of the sensor module
     ///
@@ -74,7 +74,7 @@ public:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool open(Sensor::Type sensor);
+    [[nodiscard]] bool open(Sensor::Type sensor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the sensor
@@ -88,7 +88,7 @@ public:
     /// \return Sensor value
     ///
     ////////////////////////////////////////////////////////////
-    Vector3f update();
+    [[nodiscard]] Vector3f update();
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the sensor
@@ -99,13 +99,12 @@ public:
     void setEnabled(bool enabled);
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the default Android sensor matching the sensor type
     ///
     /// \param type Type of the sensor
     ///
-    /// \return The default Android sensor, NULL otherwise
+    /// \return The default Android sensor, a null pointer otherwise
     ///
     ////////////////////////////////////////////////////////////
     static ASensor const* getDefaultSensor(Sensor::Type sensor);

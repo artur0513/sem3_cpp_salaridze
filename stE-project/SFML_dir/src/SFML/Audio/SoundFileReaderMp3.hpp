@@ -29,9 +29,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #ifndef NOMINMAX
-#define NOMINMAX               // To avoid windows.h and std::min issue
+#define NOMINMAX // To avoid windows.h and std::min issue
 #endif
-#define MINIMP3_NO_STDIO  // Minimp3 control define, eliminate file manipulation code which is useless here
+#define MINIMP3_NO_STDIO // Minimp3 control define, eliminate file manipulation code which is useless here
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -48,6 +48,7 @@
 #undef MINIMP3_NO_STDIO
 
 #include <SFML/Audio/SoundFileReader.hpp>
+
 #include <vector>
 
 
@@ -62,7 +63,6 @@ namespace priv
 class SoundFileReaderMp3 : public SoundFileReader
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Check if this reader can handle a file given by an input stream
     ///
@@ -71,10 +71,9 @@ public:
     /// \return True if the file is supported by this reader
     ///
     ////////////////////////////////////////////////////////////
-    static bool check(InputStream& stream);
+    [[nodiscard]] static bool check(InputStream& stream);
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -85,7 +84,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~SoundFileReaderMp3();
+    ~SoundFileReaderMp3() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file for reading
@@ -96,7 +95,7 @@ public:
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool open(InputStream& stream, Info& info);
+    [[nodiscard]] bool open(InputStream& stream, Info& info) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -111,7 +110,7 @@ public:
     /// \param sampleOffset Index of the sample to jump to, relative to the beginning
     ///
     ////////////////////////////////////////////////////////////
-    virtual void seek(Uint64 sampleOffset);
+    void seek(std::uint64_t sampleOffset) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Read audio samples from the open file
@@ -122,17 +121,16 @@ public:
     /// \return Number of samples actually read (may be less than \a maxCount)
     ///
     ////////////////////////////////////////////////////////////
-    virtual Uint64 read(Int16* samples, Uint64 maxCount);
+    [[nodiscard]] std::uint64_t read(std::int16_t* samples, std::uint64_t maxCount) override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    mp3dec_io_t    m_io;
-    mp3dec_ex_t    m_decoder;
-    Uint64         m_numSamples;   // Decompressed audio storage size
-    Uint64         m_position;     // Position in decompressed audio buffer
+    mp3dec_io_t   m_io;
+    mp3dec_ex_t   m_decoder;
+    std::uint64_t m_numSamples; // Decompressed audio storage size
+    std::uint64_t m_position;   // Position in decompressed audio buffer
 };
 
 } // namespace priv

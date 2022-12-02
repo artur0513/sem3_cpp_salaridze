@@ -26,12 +26,16 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Event.hpp>
+
 #import <AppKit/AppKit.h>
 
-namespace sf {
-    namespace priv {
-        class WindowImplCocoa;
-    }
+namespace sf
+{
+namespace priv
+{
+class WindowImplCocoa;
+}
 }
 
 ////////////////////////////////////////////////////////////
@@ -49,7 +53,7 @@ namespace sf {
 /// It needs to be called before any event, e.g. in the window constructor.
 ///
 ////////////////////////////////////////////////////////////
-void initialiseKeyboardHelper(void);
+void initialiseKeyboardHelper();
 
 
 ////////////////////////////////////////////////////////////
@@ -66,5 +70,3 @@ sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Ke
 ///
 ////////////////////////////////////////////////////////////
 void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& requester);
-
-

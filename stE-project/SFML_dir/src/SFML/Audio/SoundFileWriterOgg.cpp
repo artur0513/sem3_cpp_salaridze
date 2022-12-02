@@ -27,41 +27,28 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriterOgg.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Utils.hpp>
+
 #include <algorithm>
+#include <cassert>
 #include <cctype>
 #include <cstdlib>
-#include <cassert>
+#include <ostream>
 
-
-namespace
-{
-    unsigned char toLower(unsigned char character)
-    {
-        return static_cast<unsigned char>(std::tolower(character));
-    }
-}
 
 namespace sf
 {
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-bool SoundFileWriterOgg::check(const std::string& filename)
+bool SoundFileWriterOgg::check(const std::filesystem::path& filename)
 {
-    std::string extension = filename.substr(filename.find_last_of('.') + 1);
-    std::transform(extension.begin(), extension.end(), extension.begin(), toLower);
-
-    return extension == "ogg";
+    return toLower(filename.extension().string()) == ".ogg";
 }
 
 
 ////////////////////////////////////////////////////////////
-SoundFileWriterOgg::SoundFileWriterOgg() :
-m_channelCount(0),
-m_file        (),
-m_ogg         (),
-m_vorbis      (),
-m_state       ()
+SoundFileWriterOgg::SoundFileWriterOgg() : m_channelCount(0), m_file(), m_ogg(), m_vorbis(), m_state()
 {
 }
 
@@ -74,7 +61,7 @@ SoundFileWriterOgg::~SoundFileWriterOgg()
 
 
 ////////////////////////////////////////////////////////////
-bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRate, unsigned int channelCount)
+bool SoundFileWriterOgg::open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount)
 {
     // Save the channel count
     m_channelCount = channelCount;
@@ -88,7 +75,8 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
     int status = vorbis_encode_init_vbr(&m_vorbis, static_cast<long>(channelCount), static_cast<long>(sampleRate), 0.4f);
     if (status < 0)
     {
-        err() << "Failed to write ogg/vorbis file \"" << filename << "\" (unsupported bitrate)" << std::endl;
+        err() << "Failed to write ogg/vorbis file (unsupported bitrate)\n"
+              << formatDebugPathInfo(filename) << std::endl;
         close();
         return false;
     }
@@ -98,7 +86,7 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
     m_file.open(filename.c_str(), std::ios::binary);
     if (!m_file)
     {
-        err() << "Failed to write ogg/vorbis file \"" << filename << "\" (cannot open file)" << std::endl;
+        err() << "Failed to write ogg/vorbis file (cannot open file)\n" << formatDebugPathInfo(filename) << std::endl;
         close();
         return false;
     }
@@ -113,7 +101,8 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
     vorbis_comment_clear(&comment);
     if (status < 0)
     {
-        err() << "Failed to write ogg/vorbis file \"" << filename << "\" (cannot generate the headers)" << std::endl;
+        err() << "Failed to write ogg/vorbis file (cannot generate the headers)\n"
+              << formatDebugPathInfo(filename) << std::endl;
         close();
         return false;
     }
@@ -136,10 +125,10 @@ bool SoundFileWriterOgg::open(const std::string& filename, unsigned int sampleRa
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileWriterOgg::write(const Int16* samples, Uint64 count)
+void SoundFileWriterOgg::write(const std::int16_t* samples, std::uint64_t count)
 {
     // Vorbis has issues with buffers that are too large, so we ask for 64K
-    static const int bufferSize = 65536;
+    constexpr int bufferSize = 65536;
 
     // A frame contains a sample from each channel
     int frameCount = static_cast<int>(count / m_channelCount);
@@ -175,7 +164,7 @@ void SoundFileWriterOgg::flushBlocks()
     while (vorbis_analysis_blockout(&m_state, &block) == 1)
     {
         // Let the automatic bitrate management do its job
-        vorbis_analysis(&block, NULL);
+        vorbis_analysis(&block, nullptr);
         vorbis_bitrate_addblock(&block);
 
         // Get new packets from the bitrate management engine

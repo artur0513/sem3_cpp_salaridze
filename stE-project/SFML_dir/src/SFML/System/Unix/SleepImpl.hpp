@@ -29,12 +29,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
-#include <SFML/System/Time.hpp>
 
 
 namespace sf
 {
-namespace priv
+class Time;
+}
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Unix implementation of sf::Sleep
@@ -44,9 +46,7 @@ namespace priv
 ////////////////////////////////////////////////////////////
 void sleepImpl(Time time);
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 
 #endif // SFML_SLEEPIMPLUNIX_HPP

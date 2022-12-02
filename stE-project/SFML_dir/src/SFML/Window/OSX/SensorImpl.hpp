@@ -37,7 +37,6 @@ namespace priv
 class SensorImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Perform the global initialization of the sensor module
     ///
@@ -68,7 +67,7 @@ public:
     /// \return True on success, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    bool open(Sensor::Type sensor);
+    [[nodiscard]] bool open(Sensor::Type sensor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the sensor
@@ -82,7 +81,7 @@ public:
     /// \return Sensor value
     ///
     ////////////////////////////////////////////////////////////
-    Vector3f update();
+    [[nodiscard]] Vector3f update();
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the sensor

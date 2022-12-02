@@ -25,9 +25,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoModeImpl.hpp>
-#include <SFML/Window/DRM/DRMContext.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/Window/DRM/DRMContext.hpp>
+#include <SFML/Window/VideoModeImpl.hpp>
+
 #include <drm-common.h>
 
 
@@ -40,15 +41,13 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
-    drm* drm = sf::priv::DRMContext::getDRM();
+    drm*                drm  = sf::priv::DRMContext::getDRM();
     drmModeConnectorPtr conn = drm->saved_connector;
 
     if (conn)
     {
         for (int i = 0; i < conn->count_modes; i++)
-            modes.push_back(
-                VideoMode(conn->modes[i].hdisplay,
-                    conn->modes[i].vdisplay));
+            modes.push_back(VideoMode({conn->modes[i].hdisplay, conn->modes[i].vdisplay}));
     }
     else
         modes.push_back(getDesktopMode());
@@ -60,12 +59,12 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeImpl::getDesktopMode()
 {
-    drm* drm = sf::priv::DRMContext::getDRM();
+    drm*               drm = sf::priv::DRMContext::getDRM();
     drmModeModeInfoPtr ptr = drm->mode;
     if (ptr)
-        return VideoMode(ptr->hdisplay, ptr->vdisplay);
+        return VideoMode({ptr->hdisplay, ptr->vdisplay});
     else
-        return VideoMode(0, 0);
+        return VideoMode({0, 0});
 }
 
 } // namespace priv

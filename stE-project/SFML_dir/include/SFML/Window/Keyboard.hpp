@@ -40,7 +40,6 @@ namespace sf
 class SFML_WINDOW_API Keyboard
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Key codes
     ///
@@ -48,7 +47,7 @@ public:
     enum Key
     {
         Unknown = -1, //!< Unhandled key
-        A = 0,        //!< The A key
+        A       = 0,  //!< The A key
         B,            //!< The B key
         C,            //!< The C key
         D,            //!< The D key
@@ -150,15 +149,7 @@ public:
         F15,          //!< The F15 key
         Pause,        //!< The Pause key
 
-        KeyCount,     //!< Keep last -- the total number of keyboard keys
-
-        // Deprecated values:
-
-        Dash      = Hyphen,       //!< \deprecated Use Hyphen instead
-        BackSpace = Backspace,    //!< \deprecated Use Backspace instead
-        BackSlash = Backslash,    //!< \deprecated Use Backslash instead
-        SemiColon = Semicolon,    //!< \deprecated Use Semicolon instead
-        Return    = Enter         //!< \deprecated Use Enter instead
+        KeyCount //!< Keep last -- the total number of keyboard keys
     };
 
     ////////////////////////////////////////////////////////////

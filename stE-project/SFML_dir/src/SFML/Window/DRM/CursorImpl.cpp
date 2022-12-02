@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/DRM/CursorImpl.hpp>
+
 #include <vector>
 
 
@@ -40,27 +41,21 @@ CursorImpl::CursorImpl()
 
 
 ////////////////////////////////////////////////////////////
-CursorImpl::~CursorImpl()
-{
-}
-
-
-////////////////////////////////////////////////////////////
-bool CursorImpl::loadFromPixels(const Uint8* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
+bool CursorImpl::loadFromPixels(const std::uint8_t* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
 {
     return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool CursorImpl::loadFromPixelsARGB(const Uint8* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
+bool CursorImpl::loadFromPixelsARGB(const std::uint8_t* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
 {
     return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool CursorImpl::loadFromPixelsMonochrome(const Uint8* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
+bool CursorImpl::loadFromPixelsMonochrome(const std::uint8_t* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
 {
     return false;
 }

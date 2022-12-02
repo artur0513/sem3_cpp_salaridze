@@ -25,24 +25,24 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Time.hpp>
 #include <SFML/System/Unix/SleepImpl.hpp>
-#include <errno.h>
-#include <time.h>
+
+#include <cerrno>
+#include <ctime>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void sleepImpl(Time time)
 {
-    Int64 usecs = time.asMicroseconds();
+    const std::int64_t usecs = time.asMicroseconds();
 
     // Construct the time to wait
     timespec ti;
+    ti.tv_sec  = static_cast<time_t>(usecs / 1000000);
     ti.tv_nsec = static_cast<long>((usecs % 1000000) * 1000);
-    ti.tv_sec = static_cast<time_t>(usecs / 1000000);
 
     // Wait...
     // If nanosleep returns -1, we check errno. If it is EINTR
@@ -54,6 +54,4 @@ void sleepImpl(Time time)
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

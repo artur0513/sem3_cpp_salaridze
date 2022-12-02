@@ -12,7 +12,7 @@ using namespace std;
 int main()
 {
     bool console_on = false;
-    RenderWindow window(VideoMode(VideoMode::getDesktopMode().width, VideoMode::getDesktopMode().height), "STE", Style::Fullscreen);
+    RenderWindow window(VideoMode(VideoMode::getDesktopMode().size), "STE", Style::Fullscreen);
     window.setMouseCursorVisible(false);
     window.setKeyRepeatEnabled(false);
     //window.setFramerateLimit(60);
@@ -25,7 +25,7 @@ int main()
     ifstream st("config/graphics.txt");
     gr::Graphics_engine eng(window, st);
 
-    Vector2d def_size = Vector2d(9.0 * double(VideoMode::getDesktopMode().width) / double(VideoMode::getDesktopMode().height), 9.0);
+    Vector2d def_size = Vector2d(9.0 * double(VideoMode::getDesktopMode().size.x) / double(VideoMode::getDesktopMode().size.y), 9.0);
     eng.main_camera.world_size = def_size;
     Game_time gtime(2022, 06, 18, 4);
     Weather_system wsys(&eng, &gtime);
@@ -39,7 +39,7 @@ int main()
     console->log("WASD - to move car, B - turn on/off engine, L - toggle lights, Arrow up/down - shift gears");
 
     Sprite car_hud(car.car_hud.getTexture());
-    car_hud.setPosition(Vector2f(0.0, VideoMode::getDesktopMode().height - 200.0));
+    car_hud.setPosition(Vector2f(0.0, VideoMode::getDesktopMode().size.y - 200.0));
 
     bool game = true;
     Text text;
@@ -88,7 +88,7 @@ int main()
         }
         if (!game) {
             text.setString("Game Over! Distance driven: " + to_string(int(car.distance_travel * 2.5)) + " meters");
-            text.setPosition(Vector2f((VideoMode::getDesktopMode().width - text.getLocalBounds().width) * 0.5, (VideoMode::getDesktopMode().height - text.getLocalBounds().height) * 0.5));
+            text.setPosition(Vector2f((VideoMode::getDesktopMode().size.x - text.getLocalBounds().width) * 0.5, (VideoMode::getDesktopMode().size.y - text.getLocalBounds().height) * 0.5));
             window.draw(text);
         }
         window.display();
@@ -96,7 +96,7 @@ int main()
         gtime.update();
         wsys.update();
 
-        Mouse::setPosition(Vector2i(VideoMode::getDesktopMode().width / 2, VideoMode::getDesktopMode().height/2));
+        Mouse::setPosition(Vector2i(VideoMode::getDesktopMode().size.x / 2, VideoMode::getDesktopMode().size.y/2));
         eng.main_camera.world_pos = car.pos + Vector2d(car.speed.x / 5.0 + 3.0, 0.0);
         eng.main_camera.world_size = def_size * (clamp(car.speed.x / 100.0, 0.0, 0.15) + 1.0);
         //eng.main_camera.world_pos += Vector2d(0.003, 0);

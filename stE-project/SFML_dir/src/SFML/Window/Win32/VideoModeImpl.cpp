@@ -25,8 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
-#include <windows.h>
+
 #include <algorithm>
 
 
@@ -41,12 +42,12 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 
     // Enumerate all available video modes for the primary display adapter
     DEVMODE win32Mode;
-    win32Mode.dmSize = sizeof(win32Mode);
+    win32Mode.dmSize        = sizeof(win32Mode);
     win32Mode.dmDriverExtra = 0;
-    for (int count = 0; EnumDisplaySettings(NULL, static_cast<DWORD>(count), &win32Mode); ++count)
+    for (int count = 0; EnumDisplaySettings(nullptr, static_cast<DWORD>(count), &win32Mode); ++count)
     {
         // Convert to sf::VideoMode
-        VideoMode mode(win32Mode.dmPelsWidth, win32Mode.dmPelsHeight, win32Mode.dmBitsPerPel);
+        VideoMode mode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
 
         // Add it only if it is not already in the array
         if (std::find(modes.begin(), modes.end(), mode) == modes.end())
@@ -61,11 +62,11 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 VideoMode VideoModeImpl::getDesktopMode()
 {
     DEVMODE win32Mode;
-    win32Mode.dmSize = sizeof(win32Mode);
+    win32Mode.dmSize        = sizeof(win32Mode);
     win32Mode.dmDriverExtra = 0;
-    EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &win32Mode);
+    EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &win32Mode);
 
-    return VideoMode(win32Mode.dmPelsWidth, win32Mode.dmPelsHeight, win32Mode.dmBitsPerPel);
+    return VideoMode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
 }
 
 } // namespace priv

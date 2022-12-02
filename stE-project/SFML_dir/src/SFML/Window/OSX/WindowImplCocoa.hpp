@@ -31,17 +31,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
-#include <SFML/System/String.hpp>
 
-#if defined(__APPLE__)
-    #if defined(__clang__)
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    #elif defined(__GNUC__)
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    #endif
-#endif
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 ////////////////////////////////////////////////////////////
 /// Predefine OBJ-C classes
@@ -49,22 +41,24 @@
 #ifdef __OBJC__
 
 #import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
-typedef id<WindowImplDelegateProtocol,NSObject> WindowImplDelegateRef;
+using WindowImplDelegateRef = id<WindowImplDelegateProtocol, NSObject>;
 
 @class NSOpenGLContext;
-typedef NSOpenGLContext* NSOpenGLContextRef;
+using NSOpenGLContextRef = NSOpenGLContext*;
 
 #else // If C++
 
-typedef unsigned short unichar; // See NSString.h
+using unichar = unsigned short; // See NSString.h
 
-typedef void* WindowImplDelegateRef;
-typedef void* NSOpenGLContextRef;
+using WindowImplDelegateRef = void*;
+using NSOpenGLContextRef    = void*;
 
 #endif
 
 namespace sf
 {
+class String;
+
 namespace priv
 {
 ////////////////////////////////////////////////////////////
@@ -105,18 +99,17 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void windowClosed(void);
+    void windowClosed();
 
     ////////////////////////////////////////////////////////////
     /// \brief Window Resized Event - called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param width new width
-    /// \param height new height
+    /// \param size new width and height
     ///
     ////////////////////////////////////////////////////////////
-    void windowResized(unsigned int width, unsigned int height);
+    void windowResized(const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Window Lost Focus Event - called by the cocoa window object
@@ -124,7 +117,7 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void windowLostFocus(void);
+    void windowLostFocus();
 
     ////////////////////////////////////////////////////////////
     /// \brief Window Get Focus Event - called by the cocoa window object
@@ -132,7 +125,7 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void windowGainedFocus(void);
+    void windowGainedFocus();
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Down Event - called by the cocoa view object
@@ -188,7 +181,7 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void mouseMovedIn(void);
+    void mouseMovedIn();
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Out Event - called by the cocoa view object
@@ -196,7 +189,7 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void mouseMovedOut(void);
+    void mouseMovedOut();
 
     ////////////////////////////////////////////////////////////
     /// \brief Key Down Event - called by the cocoa view object
@@ -245,17 +238,16 @@ public:
     /// Also ensure NSApp is constructed.
     ///
     ////////////////////////////////////////////////////////////
-    static void setUpProcess(void);
+    static void setUpProcess();
 
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
     ///
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle getSystemHandle() const;
+    WindowHandle getSystemHandle() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -263,7 +255,7 @@ public:
     /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2i getPosition() const;
+    Vector2i getPosition() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -271,7 +263,7 @@ public:
     /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setPosition(const Vector2i& position);
+    void setPosition(const Vector2i& position) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the client size of the window
@@ -279,7 +271,7 @@ public:
     /// \return Size of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u getSize() const;
+    Vector2u getSize() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -287,7 +279,7 @@ public:
     /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setSize(const Vector2u& size);
+    void setSize(const Vector2u& size) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -295,17 +287,16 @@ public:
     /// \param title New title
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setTitle(const String& title);
+    void setTitle(const String& title) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
     ///
-    /// \param width  Icon's width, in pixels
-    /// \param height Icon's height, in pixels
+    /// \param size   Icon's width and height, in pixels
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setIcon(unsigned int width, unsigned int height, const Uint8* pixels);
+    void setIcon(const Vector2u& size, const std::uint8_t* pixels) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
@@ -313,7 +304,7 @@ public:
     /// \param visible True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setVisible(bool visible);
+    void setVisible(bool visible) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor
@@ -321,7 +312,7 @@ public:
     /// \param visible True to show, false to hide
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setMouseCursorVisible(bool visible);
+    void setMouseCursorVisible(bool visible) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Grab or release the mouse cursor
@@ -329,7 +320,7 @@ public:
     /// \param grabbed True to grab, false to release
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setMouseCursorGrabbed(bool grabbed);
+    void setMouseCursorGrabbed(bool grabbed) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the displayed cursor to a native system cursor
@@ -337,7 +328,7 @@ public:
     /// \param cursor Native system cursor type to display
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setMouseCursor(const CursorImpl& cursor);
+    void setMouseCursor(const CursorImpl& cursor) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
@@ -345,14 +336,14 @@ public:
     /// \param enabled True to enable, false to disable
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setKeyRepeatEnabled(bool enabled);
+    void setKeyRepeatEnabled(bool enabled) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Request the current window to be made the active
     ///        foreground window
     ///
     ////////////////////////////////////////////////////////////
-    virtual void requestFocus();
+    void requestFocus() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the window has the input focus
@@ -360,18 +351,16 @@ public:
     /// \return True if window has focus, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool hasFocus() const;
+    bool hasFocus() const override;
 
 protected:
-
     ////////////////////////////////////////////////////////////
     /// \brief Process incoming events from the operating system
     ///
     ////////////////////////////////////////////////////////////
-    virtual void processEvents();
+    void processEvents() override;
 
 private:
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -383,12 +372,6 @@ private:
 
 } // namespace sf
 
-#if defined(__APPLE__)
-    #if defined(__clang__)
-        #pragma clang diagnostic pop
-    #elif defined(__GNUC__)
-        #pragma GCC diagnostic pop
-    #endif
-#endif
+#pragma GCC diagnostic pop
 
 #endif // SFML_WINDOWIMPLCOCOA_HPP

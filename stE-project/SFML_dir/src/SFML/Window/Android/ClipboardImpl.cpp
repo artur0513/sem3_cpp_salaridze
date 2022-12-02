@@ -25,8 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Android/ClipboardImpl.hpp>
 #include <SFML/System/Err.hpp>
+#include <SFML/System/String.hpp>
+#include <SFML/Window/Android/ClipboardImpl.hpp>
+
+#include <ostream>
 
 
 namespace sf

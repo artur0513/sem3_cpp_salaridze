@@ -21,7 +21,7 @@ Console::Console(Vector2u _size) {
 	if (!font.loadFromFile("resources/console/font.ttf")) {
 		cout << "Unable to find font.ttf for in-game console!" << endl;
 	}
-	else if (!console_texture.create(size.x, size.y)) {
+	else if (!console_texture.create(Vector2u(size.x, size.y))) {
 		cout << "Unable to create texture for console!" << endl;
 	}
 	else

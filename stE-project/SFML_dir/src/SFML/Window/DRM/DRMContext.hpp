@@ -33,8 +33,10 @@
 #include <SFML/Window/EGLCheck.hpp>
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/VideoMode.hpp>
-#include <drm-common.h>
+
 #include <glad/egl.h>
+
+#include <drm-common.h>
 #include <gbm.h>
 #include <xf86drmMode.h>
 
@@ -48,11 +50,10 @@ class WindowImplDRM;
 class DRMContext : public GlContext
 {
 public:
-
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context, not associated to a window
     ///
-    /// \param shared Context to share the new one with (can be NULL)
+    /// \param shared Context to share the new one with (can be nullptr)
     ///
     ////////////////////////////////////////////////////////////
     DRMContext(DRMContext* shared);
@@ -66,18 +67,17 @@ public:
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    DRMContext(DRMContext* shared, const ContextSettings& settings, const WindowImpl* owner, unsigned int bitsPerPixel);
+    DRMContext(DRMContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
     ///
     /// \param shared   Context to share the new one with
     /// \param settings Creation parameters
-    /// \param width    Back buffer width, in pixels
-    /// \param height   Back buffer height, in pixels
+    /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    DRMContext(DRMContext* shared, const ContextSettings& settings, unsigned int width, unsigned int height);
+    DRMContext(DRMContext* shared, const ContextSettings& settings, const Vector2u& size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -94,13 +94,13 @@ public:
     /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool makeCurrent(bool current);
+    virtual bool makeCurrent(bool current) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Display what has been rendered to the context so far
     ///
     ////////////////////////////////////////////////////////////
-    virtual void display();
+    virtual void display() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
@@ -113,12 +113,12 @@ public:
     /// \param enabled: True to enable v-sync, false to deactivate
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setVerticalSyncEnabled(bool enabled);
+    virtual void setVerticalSyncEnabled(bool enabled) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the EGL context
     ///
-    /// \param shared       Context to share the new one with (can be NULL)
+    /// \param shared       Context to share the new one with (can be nullptr)
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     /// \param settings     Creation parameters
     ///
@@ -128,13 +128,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create the EGL surface
     ///
-    /// \param width   Back buffer width, in pixels
-    /// \param height  Back buffer height, in pixels
+    /// \param size    Back buffer width and height, in pixels
     /// \param bpp     Pixel depth, in bits per pixel
     /// \param scanout True to present the surface to the screen
     ///
     ////////////////////////////////////////////////////////////
-    void createSurface(unsigned int width, unsigned int height, unsigned int bpp, bool scanout);
+    void createSurface(const Vector2u& size, unsigned int bpp, bool scanout);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destroy the EGL surface
@@ -168,7 +167,6 @@ public:
     static GlFunctionPointer getFunction(const char* name);
 
 protected:
-
     friend class VideoModeImpl;
     friend class WindowImplDRM;
 
@@ -179,7 +177,6 @@ protected:
     static drm* getDRM();
 
 private:
-
     ////////////////////////////////////////////////////////////
     /// \brief Helper to copy the picked EGL configuration
     ///
@@ -189,18 +186,17 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    EGLDisplay  m_display; ///< The internal EGL display
-    EGLContext  m_context; ///< The internal EGL context
-    EGLSurface  m_surface; ///< The internal EGL surface
-    EGLConfig   m_config;  ///< The internal EGL config
+    EGLDisplay m_display; ///< The internal EGL display
+    EGLContext m_context; ///< The internal EGL context
+    EGLSurface m_surface; ///< The internal EGL surface
+    EGLConfig  m_config;  ///< The internal EGL config
 
-    gbm_bo* m_currentBO;
-    gbm_bo* m_nextBO;
+    gbm_bo*      m_currentBO;
+    gbm_bo*      m_nextBO;
     gbm_surface* m_gbmSurface;
-    unsigned int m_width;
-    unsigned int m_height;
-    bool m_shown;
-    bool m_scanOut;
+    Vector2u     m_size;
+    bool         m_shown;
+    bool         m_scanOut;
 };
 
 } // namespace priv

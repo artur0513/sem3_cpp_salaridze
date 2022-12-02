@@ -26,20 +26,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/OSX/WindowImplCocoa.hpp>
 #include <SFML/Window/OSX/HIDInputManager.hpp> // For localizedKeys and nonLocalizedKeys
-
 #import <SFML/Window/OSX/SFKeyboardModifiersHelper.h>
-#import <SFML/Window/OSX/SFOpenGLView.h>
 #import <SFML/Window/OSX/SFOpenGLView+keyboard_priv.h>
+#include <SFML/Window/OSX/WindowImplCocoa.hpp>
 
-#if defined(__APPLE__)
-    #if defined(__clang__)
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    #elif defined(__GNUC__)
-        #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    #endif
-#endif
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 ////////////////////////////////////////////////////////////
 /// In this file, we implement keyboard handling for SFOpenGLView
@@ -51,7 +43,7 @@
 
 
 ////////////////////////////////////////////////////////
--(BOOL)acceptsFirstResponder
+- (BOOL)acceptsFirstResponder
 {
     // Accepts key event.
     return YES;
@@ -59,7 +51,7 @@
 
 
 ////////////////////////////////////////////////////////
--(BOOL)canBecomeKeyView
+- (BOOL)canBecomeKeyView
 {
     // Accepts key event.
     return YES;
@@ -67,21 +59,21 @@
 
 
 ////////////////////////////////////////////////////////
--(void)enableKeyRepeat
+- (void)enableKeyRepeat
 {
     m_useKeyRepeat = YES;
 }
 
 
 ////////////////////////////////////////////////////////
--(void)disableKeyRepeat
+- (void)disableKeyRepeat
 {
     m_useKeyRepeat = NO;
 }
 
 
 ////////////////////////////////////////////////////////
--(void)keyDown:(NSEvent*)theEvent
+- (void)keyDown:(NSEvent*)theEvent
 {
     // Transmit to non-SFML responder
     [[self nextResponder] keyDown:theEvent];
@@ -149,7 +141,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)sfKeyUp:(NSEvent*)theEvent
+- (void)sfKeyUp:(NSEvent*)theEvent
 {
     // For some mystic reasons, key released events don't work the same way
     // as key pressed events... We somewhat hijack the event chain of response
@@ -172,7 +164,7 @@
 
 
 ////////////////////////////////////////////////////////
--(void)flagsChanged:(NSEvent*)theEvent
+- (void)flagsChanged:(NSEvent*)theEvent
 {
     // Transmit to non-SFML responder
     [[self nextResponder] flagsChanged:theEvent];
@@ -186,7 +178,7 @@
 
 
 ////////////////////////////////////////////////////////
-+(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event
++ (sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event
 {
     // Key code
     sf::Keyboard::Key key = sf::Keyboard::Unknown;
@@ -207,7 +199,7 @@
 
 
 ////////////////////////////////////////////////////////
-+(BOOL)isValidTextUnicode:(NSEvent*)event
++ (BOOL)isValidTextUnicode:(NSEvent*)event
 {
     if ([event keyCode] == 0x35) // Escape
     {
@@ -225,4 +217,3 @@
 }
 
 @end
-

@@ -72,16 +72,14 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/WindowImplWin32.hpp
     )
     if(SFML_OPENGL_ES)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/EGLCheck.cpp
             ${SRCROOT}/EGLCheck.hpp
             ${SRCROOT}/EglContext.cpp
             ${SRCROOT}/EglContext.hpp
         )
     else()
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/Win32/WglContext.cpp
             ${SRCROOT}/Win32/WglContext.hpp
         )
@@ -129,48 +127,43 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/WindowImplX11.hpp
         )
         if(SFML_OPENGL_ES)
-            set(PLATFORM_SRC
-                ${PLATFORM_SRC}
+            list(APPEND PLATFORM_SRC
                 ${SRCROOT}/EGLCheck.cpp
                 ${SRCROOT}/EGLCheck.hpp
                 ${SRCROOT}/EglContext.cpp
                 ${SRCROOT}/EglContext.hpp
             )
         else()
-             set(PLATFORM_SRC
-                ${PLATFORM_SRC}
+             list(APPEND PLATFORM_SRC
                 ${SRCROOT}/Unix/GlxContext.cpp
                 ${SRCROOT}/Unix/GlxContext.hpp
             )
         endif()
     endif()
     if(SFML_OS_LINUX)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/Unix/JoystickImpl.cpp
             ${SRCROOT}/Unix/JoystickImpl.hpp
         )
     elseif(SFML_OS_FREEBSD)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/FreeBSD/JoystickImpl.cpp
             ${SRCROOT}/FreeBSD/JoystickImpl.hpp
         )
     elseif(SFML_OS_OPENBSD)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/OpenBSD/JoystickImpl.cpp
             ${SRCROOT}/OpenBSD/JoystickImpl.hpp
         )
     elseif(SFML_OS_NETBSD)
-        set(PLATFORM_SRC
-            ${PLATFORM_SRC}
+        list(APPEND PLATFORM_SRC
             ${SRCROOT}/NetBSD/JoystickImpl.cpp
             ${SRCROOT}/NetBSD/JoystickImpl.hpp
         )
     endif()
     source_group("unix" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_MACOSX)
+    enable_language(OBJC OBJCXX)
     set(PLATFORM_SRC
         ${SRCROOT}/OSX/cpp_objc_conversion.h
         ${SRCROOT}/OSX/cpp_objc_conversion.mm
@@ -224,6 +217,7 @@ elseif(SFML_OS_MACOSX)
     )
     source_group("mac" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_IOS)
+    enable_language(OBJCXX)
     set(PLATFORM_SRC
         ${SRCROOT}/iOS/CursorImpl.hpp
         ${SRCROOT}/iOS/CursorImpl.cpp
@@ -275,7 +269,7 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 # define the sfml-window target
-sfml_add_library(sfml-window
+sfml_add_library(Window
                  SOURCES ${SRC} ${PLATFORM_SRC})
 # DRM libraries
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
@@ -292,23 +286,18 @@ if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
         target_link_libraries(sfml-window PRIVATE X11)
     endif()
 endif()
-target_link_libraries(sfml-window PUBLIC sfml-system)
+target_link_libraries(sfml-window PUBLIC SFML::System)
 
 # glad sources
 target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
 
-# When static linking on macOS, we need to add this flag for objective C to work
-if ((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOSX)
-    target_link_libraries(sfml-window PRIVATE -ObjC)
-endif()
-
 # Vulkan headers
-target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/vulkan")
+target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/vulkan")
 
 # CMake 3.11 and later prefer to choose GLVND, but we choose legacy OpenGL for backward compability
 # (unless the OpenGL_GL_PREFERENCE was explicitly set)
 # See CMP0072 for more details (cmake --help-policy CMP0072)
-if ((NOT ${CMAKE_VERSION} VERSION_LESS 3.11) AND (NOT OpenGL_GL_PREFERENCE))
+if(NOT OpenGL_GL_PREFERENCE)
     set(OpenGL_GL_PREFERENCE "LEGACY")
 endif()
 
@@ -330,7 +319,7 @@ if(SFML_OS_WINDOWS AND NOT SFML_COMPILER_MSVC)
     include(CheckIncludeFile)
     check_include_file(dinput.h DINPUT_H_FOUND)
     if(NOT DINPUT_H_FOUND)
-        target_include_directories(sfml-window PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/mingw")
+        target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/mingw")
     endif()
 endif()
 

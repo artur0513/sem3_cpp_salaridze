@@ -3,7 +3,7 @@
 
 Car::Car(gr::Graphics_engine* _eng) {
 	font.loadFromFile("resources/console/font.ttf");
-	car_hud.create(256, 256);
+	car_hud.create(Vector2u(256, 256));
 	hud_text.setFont(font);
 	hud_text.setFillColor(Color(255, 255, 255, 255));
 	tick_time = clock.getElapsedTime();

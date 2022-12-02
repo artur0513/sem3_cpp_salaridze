@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Common.h"
 
+
 string get_date_string() {
 	char buffer[80];
 	time_t seconds = time(NULL);

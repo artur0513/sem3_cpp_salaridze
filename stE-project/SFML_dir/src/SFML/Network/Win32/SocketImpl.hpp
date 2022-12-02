@@ -28,15 +28,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#ifdef _WIN32_WINDOWS
-    #undef _WIN32_WINDOWS
-#endif
-#ifdef _WIN32_WINNT
-    #undef _WIN32_WINNT
-#endif
-#define _WIN32_WINDOWS 0x0501
-#define _WIN32_WINNT   0x0501
 #include <SFML/Network/Socket.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
+
+#include <cstdint>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
@@ -53,12 +48,11 @@ namespace priv
 class SocketImpl
 {
 public:
-
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef int AddrLength;
-    typedef int Size;
+    using AddrLength = int;
+    using Size       = int;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create an internal sockaddr_in address
@@ -69,7 +63,7 @@ public:
     /// \return sockaddr_in ready to be used by socket functions
     ///
     ////////////////////////////////////////////////////////////
-    static sockaddr_in createAddress(Uint32 address, unsigned short port);
+    static sockaddr_in createAddress(std::uint32_t address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the value of the invalid socket
