@@ -54,28 +54,28 @@ public:
 };
 
 
-class Gas_can : public Obstacle {
+class Gas_can final : public Obstacle {
 public:
 	Gas_can(ifstream& file, gr::Graphics_engine* _eng);
 
 	void apply_effect(Car& car) override;
 };
 
-class Boost : public Obstacle {
+class Boost final : public Obstacle {
 public:
 	Boost(ifstream& file, gr::Graphics_engine* _eng);
 
 	void apply_effect(Car& car) override;
 };
 
-class Barrier : public Obstacle {
+class Barrier final : public Obstacle {
 public:
 	Barrier(ifstream& file, gr::Graphics_engine* _eng);
 
 	void apply_effect(Car& car) override;
 };
 
-class Repair_kit : public Obstacle {
+class Repair_kit final : public Obstacle {
 public:
 	Repair_kit(ifstream& file, gr::Graphics_engine* _eng);
 

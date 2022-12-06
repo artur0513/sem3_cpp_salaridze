@@ -32,6 +32,7 @@ private:
 	~Console() {};
 
 public:
+	bool any_errors = false;
 	Font font;
 	deque<pair<string, ConsoleMessageType>> messages; // Массив со всеми сообщениями в консоли
 	Sprite sprite;

@@ -201,6 +201,7 @@ namespace gr {
 
 		string shader_name;
 		Clock clock;
+		bool bad_load = true;
 	public:
 		Sprite_object obj; // Обьект на основе которого будет создаваться эффект (например в нем может быть distortion texture)
 		RenderTexture* effect_temp; // Указатель на промежуточную текстуру для рендера эффектов (она одна общая на все эффекты) НУЖНО УКАЗАТЬ ПРИ ЗАГРУЗКЕ

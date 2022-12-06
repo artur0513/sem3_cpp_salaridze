@@ -134,54 +134,72 @@ void gr::Sprite_object::animation_update() {
 void gr::Sprite_object::load_from_file(ifstream& file) {
 	Resource_manager<Texture>* mng = Resource_manager<Texture>::get_instance();
 
+	file.exceptions(ifstream::badbit | ifstream::failbit);
+
 	bool reading_texture = false;
 	char buff;
-
-	texture_name.clear(); // На всякий случай очистим имя текстуры перед считыванием
-	// Считывем имя текстуры в кавычках
-	while (file >> buff) {
-		if (buff == '"') {
+	try {
+		texture_name.clear(); // На всякий случай очистим имя текстуры перед считыванием
+		// Считывем имя текстуры в кавычках
+		while (file >> buff) {
+			if (buff == '"') {
+				if (reading_texture)
+					break;
+				else {
+					reading_texture = true;
+					continue;
+				}
+			}
 			if (reading_texture)
-				break;
-			else {
-				reading_texture = true;
-				continue;
+				texture_name.push_back(buff);
+		}
+		// Когда считали навзвание текстуры, получаем ссылку на текстуру от менеджера
+		texture_name = relative(texture_name).string();
+		Texture* texture = mng->get_object(texture_name);
+
+		IntRect rect; // для Texture Rect
+		int anims, frames_in_anim, frame_time; // Для считывания текстур
+		file >> rect.left >> rect.top >> rect.width >> rect.height >> world_pos.x >> world_pos.y >> world_size.x >> world_size.y >> delta_layer >> anims;
+
+		def_sprite.setTexture(*texture);
+		def_sprite.setTextureRect(rect);
+		def_sprite.setPosition(Vector2f(10000.f, 10000.f)); // КОСТЫЛЬ ДЛЯ ФИКСА БАГА С КАРТОЙ ВЫСОТ
+
+		pixel_local_size.x = def_sprite.getLocalBounds().width;
+		pixel_local_size.y = def_sprite.getLocalBounds().height;
+
+		// Считываем анимации
+		for (int j = 0; j < anims; j++) {
+			Animation anim;
+			animations.push_back(anim);
+
+			file >> frames_in_anim;
+			for (int k = 0; k < frames_in_anim; k++) {
+				file >> rect.left >> rect.top >> rect.width >> rect.height >> frame_time;
+
+				Sprite anim_sprite;
+				anim_sprite.setTexture(*texture);
+				anim_sprite.setTextureRect(rect);
+				animations[j].add_frame(anim_sprite, milliseconds(frame_time));
 			}
 		}
-		if (reading_texture)
-			texture_name.push_back(buff);
+		current_sprite = &def_sprite;
 	}
-	// Когда считали навзвание текстуры, получаем ссылку на текстуру от менеджера
-	texture_name = relative(texture_name).string();
-	Texture* texture = mng->get_object(texture_name);
+	catch (std::ifstream::failure e) {
+		cout << "Error while loading sprite, config file may have incorrect structure" << endl;
+		Console::get_instance()->log("Error while loading sprite, config file may have incorrect structure", ConsoleMessageType::ERR);
 
-	IntRect rect; // для Texture Rect
-	int anims, frames_in_anim, frame_time; // Для считывания текстур
-	file >> rect.left >> rect.top >> rect.width >> rect.height >> world_pos.x >> world_pos.y >> world_size.x >> world_size.y >> delta_layer >> anims;
-
-	def_sprite.setTexture(*texture);
-	def_sprite.setTextureRect(rect);
-	def_sprite.setPosition(Vector2f(10000.f, 10000.f)); // КОСТЫЛЬ ДЛЯ ФИКСА БАГА С КАРТОЙ ВЫСОТ
-
-	pixel_local_size.x = def_sprite.getLocalBounds().width;
-	pixel_local_size.y = def_sprite.getLocalBounds().height;
-
-	// Считываем анимации
-	for (int j = 0; j < anims; j++) {
-		Animation anim;
-		animations.push_back(anim);
-
-		file >> frames_in_anim;
-		for (int k = 0; k < frames_in_anim; k++) {
-			file >> rect.left >> rect.top >> rect.width >> rect.height >> frame_time;
-
-			Sprite anim_sprite;
-			anim_sprite.setTexture(*texture);
-			anim_sprite.setTextureRect(rect);
-			animations[j].add_frame(anim_sprite, milliseconds(frame_time));
-		}
+		Texture* texture = mng->get_object("resources/sprites/error.png");
+		def_sprite.setTexture(*texture);
+		def_sprite.setTextureRect(IntRect(Vector2i(0, 0), Vector2i(100, 100)));
+		pixel_local_size.x = def_sprite.getLocalBounds().width;
+		pixel_local_size.y = def_sprite.getLocalBounds().height;
+		world_pos = Vector2d(0.0, 0.0);
+		world_size = Vector2d(1.0, 1.0);
+		delta_layer = -1000.0;
+		current_sprite = &def_sprite;
 	}
-	current_sprite = &def_sprite;
+	file.exceptions(0);
 }
 
 // Сохранение спрайта в файл
@@ -238,37 +256,50 @@ void gr::Effect::load_from_file(ifstream& file) {
 
 	bool reading_shader = false;
 	char buff;
-
-	shader_name.clear(); // На всякий случай очистим имя текстуры перед считыванием
-	// Считывем имя текстуры в кавычках
-	while (file >> buff) {
-		if (buff == '"') {
-			if (reading_shader)
-				break;
-			else {
-				reading_shader = true;
-				continue;
+	
+	file.exceptions(ifstream::badbit | ifstream::failbit);
+	try {
+		shader_name.clear(); // На всякий случай очистим имя текстуры перед считыванием
+		// Считывем имя текстуры в кавычках
+		while (file >> buff) {
+			if (buff == '"') {
+				if (reading_shader)
+					break;
+				else {
+					reading_shader = true;
+					continue;
+				}
 			}
+			if (reading_shader)
+				shader_name.push_back(buff);
 		}
-		if (reading_shader)
-			shader_name.push_back(buff);
-	}
-	// Когда считали навзвание текстуры, получаем ссылку на текстуру от менеджера
-	shader_name = relative(shader_name).string();
-	shader = mng->get_object(shader_name); // Получаем указатель на шейдер
+		// Когда считали навзвание текстуры, получаем ссылку на текстуру от менеджера
+		shader_name = relative(shader_name).string();
+		shader = mng->get_object(shader_name); // Получаем указатель на шейдер
 
-	short attrs; // Получаем количество аттрибутов
-	file >> attrs;
-	for (short i = 0; i < attrs; i++) { // И считываем пары из названия переменной и значения
-		string s_temp;
-		float f_temp;
-		file >> s_temp >> f_temp;
-		shader_attrs.push_back(pair<string, float>(s_temp, f_temp));
+		short attrs; // Получаем количество аттрибутов
+		file >> attrs;
+		for (short i = 0; i < attrs; i++) { // И считываем пары из названия переменной и значения
+			string s_temp;
+			float f_temp;
+			file >> s_temp >> f_temp;
+			shader_attrs.push_back(pair<string, float>(s_temp, f_temp));
+		}
+		bad_load = false;
 	}
+	catch (std::ifstream::failure e) {
+		cout << "Error while loading effect, config file may have incorrect structure" << endl;
+		Console::get_instance()->log("Error while loading effect, config file may have incorrect structure", ConsoleMessageType::ERR);
+		bad_load = true;
+	}
+	file.exceptions(0);
 }
 
 // Создание спрайта эффекта на основе текстуры на которую эффект будет накладываться
 void gr::Effect::draw(RenderTexture* texture, Camera cam) {
+	if (bad_load)
+		return;
+
 	IntRect rect; // Везде нужно округление, иначе текстура жестко дрожит
 	rect.top = round(obj.get_sprite()->getGlobalBounds().top);
 	rect.left = round(obj.get_sprite()->getGlobalBounds().left);
@@ -357,18 +388,33 @@ Vector3f gr::Light_source::animation_update() {
 }
 
 void gr::Light_source::load_from_file(ifstream& file) {
-	file >> smooth_brightness_change;
-	file >> world_pos.x >> world_pos.y >> world_size.x >> world_size.y >> direction.x >> direction.y;
-	unsigned short anim_lenth;
-	file >> anim_lenth;
-	for (unsigned short i = 0; i < anim_lenth; i++) {
-		Vector3f color;
-		int col_time;
-		file >> color.x >> color.y >> color.z >> col_time;
-		full_animation_time += milliseconds(col_time);
-		colors.push_back(pair<Vector3f, Time>(color, full_animation_time));
+	file.exceptions(ifstream::badbit | ifstream::failbit);
+
+	try {
+		file >> smooth_brightness_change;
+		file >> world_pos.x >> world_pos.y >> world_size.x >> world_size.y >> direction.x >> direction.y;
+		unsigned short anim_lenth;
+		file >> anim_lenth;
+		for (unsigned short i = 0; i < anim_lenth; i++) {
+			Vector3f color;
+			int col_time;
+			file >> color.x >> color.y >> color.z >> col_time;
+			full_animation_time += milliseconds(col_time);
+			colors.push_back(pair<Vector3f, Time>(color, full_animation_time));
+		}
+	}
+	catch (std::ifstream::failure e) {
+		cout << "Error while loading light source, config file may have incorrect structure" << endl;
+		Console::get_instance()->log("Error while loading light source, config file may have incorrect structure", ConsoleMessageType::ERR);
+
+		smooth_brightness_change = false;
+		world_pos = Vector2d(0.0, 0.0);
+		world_size = Vector2d(1.0, 1.0);
+		full_animation_time += milliseconds(1000);
+		colors.push_back(pair<Vector3f, Time>(Vector3f(1.f, 0.f, 0.f), full_animation_time));
 	}
 
+	file.exceptions(0);
 }
 
 void gr::Light_source::print_info() {
@@ -753,6 +799,10 @@ gr::Graphics_engine::~Graphics_engine() {
 	}
 
 	for (auto obj = lights.begin(); obj < lights.end(); obj++) {
+		delete* obj;
+	}
+
+	for (auto obj = effects.begin(); obj < effects.end(); obj++) {
 		delete* obj;
 	}
 }

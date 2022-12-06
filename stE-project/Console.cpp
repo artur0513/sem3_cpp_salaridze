@@ -47,6 +47,9 @@ void Console::log(string msg, ConsoleMessageType type) {
 
 	msg = "[" + get_time_string() + "] " + msg;
 
+	if (type == ConsoleMessageType::ERR)
+		any_errors = true;
+
 	// Если текст нового сообщения совпадает с предыдущим сообщением, то не будем их повторять
 	if (messages.size() > 0)
 		if (msg == messages[messages.size() - 1].first)
@@ -57,6 +60,9 @@ void Console::log(string msg, ConsoleMessageType type) {
 }
 
 void Console::render() {
+	if (max_symbols_in_line == 0)
+		return;
+
 	console_texture.clear(background_color);
 	int sum_height = size.y, msg_counter = messages.size() - 1;
 	int lines = 0;

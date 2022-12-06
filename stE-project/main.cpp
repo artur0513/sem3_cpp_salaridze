@@ -27,7 +27,7 @@ int main()
 
     Vector2d def_size = Vector2d(9.0 * double(VideoMode::getDesktopMode().size.x) / double(VideoMode::getDesktopMode().size.y), 9.0);
     eng.main_camera.world_size = def_size;
-    Game_time gtime(2022, 06, 18, 4);
+    Game_time gtime(2022, 06, 18, 7);
     Weather_system wsys(&eng, &gtime);
     ifstream w("config/weather.txt");
     wsys.load_from_file(w);
@@ -86,7 +86,7 @@ int main()
         if (console_on) {
             window.draw(console->sprite);
         }
-        if (!game) {
+        if (!game) { // Проиграли, выводим счет
             text.setString("Game Over! Distance driven: " + to_string(int(car.distance_travel * 2.5)) + " meters");
             text.setPosition(Vector2f((VideoMode::getDesktopMode().size.x - text.getLocalBounds().width) * 0.5, (VideoMode::getDesktopMode().size.y - text.getLocalBounds().height) * 0.5));
             window.draw(text);
