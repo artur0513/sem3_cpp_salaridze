@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "Common.h"
 #include "Console.h"
 #include "Graphics.h"
@@ -11,7 +11,7 @@ using namespace std;
 
 int main()
 {
-    // Как работает тест: грузим пару спрайтов, машину и препятствие. Рендерим один кадр. Проверяем что в консоль не было напечатано ошибок и что проверка пересечения машины и препятствия работает
+    // РљР°Рє СЂР°Р±РѕС‚Р°РµС‚ С‚РµСЃС‚: РіСЂСѓР·РёРј РїР°СЂСѓ СЃРїСЂР°Р№С‚РѕРІ, РјР°С€РёРЅСѓ Рё РїСЂРµРїСЏС‚СЃС‚РІРёРµ. Р РµРЅРґРµСЂРёРј РѕРґРёРЅ РєР°РґСЂ. РџСЂРѕРІРµСЂСЏРµРј С‡С‚Рѕ РІ РєРѕРЅСЃРѕР»СЊ РЅРµ Р±С‹Р»Рѕ РЅР°РїРµС‡Р°С‚Р°РЅРѕ РѕС€РёР±РѕРє Рё С‡С‚Рѕ РїСЂРѕРІРµСЂРєР° РїРµСЂРµСЃРµС‡РµРЅРёСЏ РјР°С€РёРЅС‹ Рё РїСЂРµРїСЏС‚СЃС‚РІРёСЏ СЂР°Р±РѕС‚Р°РµС‚
     cout << filesystem::absolute("../") << endl;
 
     RenderWindow window(VideoMode(VideoMode::getDesktopMode().size), "STE", Style::Fullscreen);
@@ -38,7 +38,7 @@ int main()
     Obstacle* barrier = new Barrier(obst, &eng);
 
     window.clear();
-    eng.render(); // Тестовый рендер картинки
+    eng.render(); // РўРµСЃС‚РѕРІС‹Р№ СЂРµРЅРґРµСЂ РєР°СЂС‚РёРЅРєРё
     window.display();
 
     bool restrict = barrier->check_restriction(car);
