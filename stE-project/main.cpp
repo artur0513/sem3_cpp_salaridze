@@ -44,7 +44,8 @@ int main()
     bool game = true;
     Text text;
     Font font;
-    font.loadFromFile("resources/console/font.ttf");
+    if (!font.loadFromFile("resources/console/font.ttf"))
+        console->log("Error loading font from resources/console/font.ttf", ConsoleMessageType::ERR);
     text.setFont(font);
 
     while (window.isOpen()) {

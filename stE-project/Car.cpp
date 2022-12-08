@@ -2,8 +2,12 @@
 #include "Car.h"
 
 Car::Car(gr::Graphics_engine* _eng) {
-	font.loadFromFile("resources/console/font.ttf");
-	car_hud.create(Vector2u(256, 256));
+	if (!font.loadFromFile("resources/console/font.ttf"))
+		console->log("Cannot find font for car hud", ConsoleMessageType::ERR);
+	
+	if (!car_hud.create(Vector2u(256, 256)))
+		console->log("Cannot create render texture for car hud", ConsoleMessageType::ERR);
+
 	hud_text.setFont(font);
 	hud_text.setFillColor(Color(255, 255, 255, 255));
 	tick_time = clock.getElapsedTime();

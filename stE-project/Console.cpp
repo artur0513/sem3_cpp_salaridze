@@ -14,6 +14,8 @@ Color Console::type_to_color(ConsoleMessageType type) { // Тип ошибки �
 	case ConsoleMessageType::SUCC:
 		return Color(0, 170, 0, 255);
 	}
+
+	return Color(255, 255, 255, 255); // На всякий случай
 }
 
 Console::Console(Vector2u _size) {
