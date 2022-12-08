@@ -1,5 +1,10 @@
 ﻿#pragma once
 #include "Common.h"
+#include <time.h>
+
+using namespace std;
+
+#define localtime_s(timeinfo_ptr, seconds_ptr) * (timeinfo_ptr) = *localtime(seconds_ptr)
 
 
 string get_date_string() {

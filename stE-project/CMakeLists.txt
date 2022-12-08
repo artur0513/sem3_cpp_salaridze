@@ -14,13 +14,20 @@ add_subdirectory(SFML_dir SFML)
 include_directories(./src)
 include_directories(./src/headers)
 
-target_link_libraries(stE-project sfml-graphics sfml-system sfml-main)
+target_link_libraries(stE-project sfml-graphics sfml-system)
 target_compile_features(stE-project PUBLIC cxx_std_20)
+if(WIN32)
+target_link_libraries(stE-project sfml-main)
+endif()
 
 if (BUILD_TESTING) #тест
 add_executable (stE-testing "test.cpp" "Car.cpp" "Car.h" "simple-opengl-loader.h" "Common.cpp" "Common.h" "Console.cpp" "Console.h" "Graphics.cpp" "Graphics.h"
 							"LevelGenerator.cpp" "LevelGenerator.h" "Weather.cpp" "Weather.h")
-target_link_libraries(stE-testing sfml-graphics sfml-system sfml-main)
+target_link_libraries(stE-testing sfml-graphics sfml-system)
+if(WIN32)
+target_link_libraries(stE-testing sfml-main)
+endif()
+
 target_compile_features(stE-testing PUBLIC cxx_std_20)
 add_test(FirstTest stE-testing)
 set_tests_properties(FirstTest PROPERTIES

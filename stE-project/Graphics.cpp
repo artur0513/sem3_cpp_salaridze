@@ -199,7 +199,7 @@ void gr::Sprite_object::load_from_file(ifstream& file) {
 		delta_layer = -1000.0;
 		current_sprite = &def_sprite;
 	}
-	file.exceptions(0);
+	file.exceptions(std::ios::goodbit);
 }
 
 // Сохранение спрайта в файл
@@ -292,7 +292,7 @@ void gr::Effect::load_from_file(ifstream& file) {
 		Console::get_instance()->log("Error while loading effect, config file may have incorrect structure", ConsoleMessageType::ERR);
 		bad_load = true;
 	}
-	file.exceptions(0);
+	file.exceptions(std::ios::goodbit);
 }
 
 // Создание спрайта эффекта на основе текстуры на которую эффект будет накладываться
@@ -414,7 +414,7 @@ void gr::Light_source::load_from_file(ifstream& file) {
 		colors.push_back(pair<Vector3f, Time>(Vector3f(1.f, 0.f, 0.f), full_animation_time));
 	}
 
-	file.exceptions(0);
+	file.exceptions(std::ios::goodbit);
 }
 
 void gr::Light_source::print_info() {
