@@ -12,8 +12,6 @@ using namespace std;
 int main()
 {
     // Как работает тест: грузим пару спрайтов, машину и препятствие. Рендерим один кадр. Проверяем что в консоль не было напечатано ошибок и что проверка пересечения машины и препятствия работает
-    cout << filesystem::absolute("../") << endl;
-
     RenderWindow window(VideoMode(VideoMode::getDesktopMode().size), "STE", Style::Fullscreen);
     Console* console = Console::get_instance();
 
