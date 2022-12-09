@@ -70,6 +70,7 @@ void main() {
 			normal_vec_screenspace.y = -(normal_vec_global.y + normal_vec_global.x)*0.7071;
 			//brightness_angle_koeff = dot(normal_vec_screenspace, normalize(point_to_light));
 			//brightness_angle_koeff = clamp(0.0, 1.0, brightness_angle_koeff);
+			// На некоторый системах две строчки выше сильно ломают освещение, я не знаю почему (((
 		}
 		
 		float angleCoordOnMap = angle / (2.0 * PI); // Координаты данного угла на карте с источниками
