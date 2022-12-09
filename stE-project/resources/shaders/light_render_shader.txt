@@ -68,8 +68,8 @@ void main() {
 			vec2 normal_vec_screenspace;
 			normal_vec_screenspace.x = (normal_vec_global.y - normal_vec_global.x)*0.7071;
 			normal_vec_screenspace.y = -(normal_vec_global.y + normal_vec_global.x)*0.7071;
-			brightness_angle_koeff = dot(normal_vec_screenspace, normalize(point_to_light));
-			brightness_angle_koeff = clamp(0.0, 1.0, brightness_angle_koeff);
+			//brightness_angle_koeff = dot(normal_vec_screenspace, normalize(point_to_light));
+			//brightness_angle_koeff = clamp(0.0, 1.0, brightness_angle_koeff);
 		}
 		
 		float angleCoordOnMap = angle / (2.0 * PI); // Координаты данного угла на карте с источниками

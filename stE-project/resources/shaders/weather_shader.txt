@@ -148,33 +148,33 @@ void main() {
 		rain_color = vec4(0.55, 0.55, 0.7, 0.45);
 	}
 	// Вторая итерация (крупные) - тут капли привязаны к мировым координатам
-	rain_check.y = floor((world_point_pos.y - u_time*10.0)*5.0) + 145;
-	rain_check.x = floor((world_point_pos.x - world_point_pos.y*wind_speed.x*0.17)*35.0) + 397;
+	rain_check.y = floor((world_point_pos.y - u_time*10.0)*5.0) + 145.0;
+	rain_check.x = floor((world_point_pos.x - world_point_pos.y*wind_speed.x*0.17)*35.0) + 397.0;
 	if (random_adv(rain_check) < rain_strength*0.75){
 		rain_color = vec4(0.6, 0.6, 0.65, 0.55);
 	}
 	// Третья итерация (средние) - тут капли привязаны к мировым координатам
-	rain_check.y = floor((world_point_pos.y - u_time*12.0)*6.0) + 357;
-	rain_check.x = floor((world_point_pos.x - world_point_pos.y*wind_speed.x*0.23)*42.5) + 184;
+	rain_check.y = floor((world_point_pos.y - u_time*12.0)*6.0) + 357.0;
+	rain_check.x = floor((world_point_pos.x - world_point_pos.y*wind_speed.x*0.23)*42.5) + 184.0;
 	if (random_adv(rain_check) < rain_strength*1.25){
 		rain_color = vec4(0.55, 0.55, 0.65, 0.6);
 	}
 	// Четвертая итерация (очень крупные) - тут капли привязаны к мировым координатам
-	rain_check.y = floor((world_point_pos.y - u_time*9.5)*4.0) + 668;
-	rain_check.x = floor((world_point_pos.x - world_point_pos.y*wind_speed.x*0.15)*25.0) + 444;
+	rain_check.y = floor((world_point_pos.y - u_time*9.5)*4.0) + 668.0;
+	rain_check.x = floor((world_point_pos.x - world_point_pos.y*wind_speed.x*0.15)*25.0) + 444.0;
 	if (random_adv(rain_check) < rain_strength*0.5){
 		rain_color = vec4(0.6, 0.6, 0.8, 0.3);
 	}
 	
 	// Пятая итерация (мелкие капли) - тут капли привязаны к экранным координатам, чтобы дождь был виден при большом масштабе
-	rain_check.y = floor((gl_TexCoord[0].y - world_pos.y/world_size.y - u_time)/0.015) + 3948;
-	rain_check.x = floor((gl_TexCoord[0].x + world_pos.x/world_size.x - gl_TexCoord[0].y*wind_speed.x*0.100)*1000.0) + 435;
+	rain_check.y = floor((gl_TexCoord[0].y - world_pos.y/world_size.y - u_time)/0.015) + 3948.0;
+	rain_check.x = floor((gl_TexCoord[0].x + world_pos.x/world_size.x - gl_TexCoord[0].y*wind_speed.x*0.100)*1000.0) + 435.0;
 	if (random_adv(rain_check) < rain_strength){
 		rain_color = vec4(0.5, 0.5, 0.8, 0.4);
 	}
 	// Шестая итерация (крупные) - тут капли привязаны к экранным координатам, чтобы дождь был виден при большом масштабе
-	rain_check.y = floor((gl_TexCoord[0].y - world_pos.y/world_size.y - u_time*1.25)/0.027) + 5678;
-	rain_check.x = floor((gl_TexCoord[0].x + world_pos.x/world_size.x - gl_TexCoord[0].y*wind_speed.x*0.112)*600.0) + 466;
+	rain_check.y = floor((gl_TexCoord[0].y - world_pos.y/world_size.y - u_time*1.25)/0.027) + 5678.0;
+	rain_check.x = floor((gl_TexCoord[0].x + world_pos.x/world_size.x - gl_TexCoord[0].y*wind_speed.x*0.112)*600.0) + 466.0;
 	if (random_adv(rain_check) < rain_strength*0.75){
 		rain_color = vec4(0.6, 0.6, 0.65, 0.5);
 	}
